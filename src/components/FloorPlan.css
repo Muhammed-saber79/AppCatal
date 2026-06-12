@@ -1,0 +1,65 @@
+.floorplan-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.floorplan-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Cairo', sans-serif;
+  font-size: 13px;
+  color: #a89060;
+  border: 1px solid;
+  border-radius: 20px;
+  padding: 3px 12px;
+  opacity: 0.85;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.floorplan-container {
+  width: 100%;
+  max-width: 680px;
+  border: 1px solid rgba(212,168,67,0.2);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #0d0d0f;
+}
+
+.floorplan-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.hotspot-group {
+  transition: opacity 0.2s;
+}
+.hotspot-group:hover {
+  opacity: 0.9;
+}
+
+.floorplan-hint {
+  font-family: 'Cairo', sans-serif;
+  font-size: 13px;
+  color: rgba(212,168,67,0.5);
+  text-align: center;
+  margin: 0;
+  letter-spacing: 0.5px;
+}

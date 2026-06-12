@@ -1,0 +1,166 @@
+.carpenter-section {
+  padding: 60px 24px 80px;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.section-title-ar {
+  font-family: 'Cairo', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #d4a843;
+  margin: 0 0 6px;
+}
+
+.section-title-en {
+  font-size: 14px;
+  color: rgba(212,168,67,0.4);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: sans-serif;
+  margin: 0;
+}
+
+.carpenter-print-btn-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.print-btn {
+  background: rgba(212,168,67,0.1);
+  border: 1px solid rgba(212,168,67,0.3);
+  color: #d4a843;
+  font-family: 'Cairo', sans-serif;
+  font-size: 14px;
+  padding: 8px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.print-btn:hover {
+  background: rgba(212,168,67,0.2);
+  border-color: #d4a843;
+}
+
+.carpenter-table-wrap {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(212,168,67,0.2);
+}
+
+.carpenter-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Cairo', sans-serif;
+  background: #0f0d0a;
+  min-width: 680px;
+}
+
+.carpenter-table thead tr {
+  background: rgba(212,168,67,0.12);
+}
+
+.carpenter-table th {
+  padding: 14px 16px;
+  text-align: right;
+  font-size: 14px;
+  color: #d4a843;
+  font-weight: 700;
+  border-bottom: 2px solid rgba(212,168,67,0.25);
+  white-space: nowrap;
+}
+
+.carpenter-table tbody tr {
+  border-bottom: 1px solid rgba(212,168,67,0.08);
+  transition: background 0.15s;
+}
+.carpenter-table tbody tr:hover {
+  background: rgba(212,168,67,0.04);
+}
+
+.carpenter-table td {
+  padding: 12px 16px;
+  vertical-align: top;
+  font-size: 13px;
+  color: #c8b888;
+}
+
+.room-cell {
+  background: rgba(212,168,67,0.06) !important;
+  border-left: 3px solid #d4a843;
+  vertical-align: middle !important;
+  text-align: center;
+}
+
+.room-name-ar {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #d4a843;
+}
+.room-name-en {
+  display: block;
+  font-size: 11px;
+  color: rgba(212,168,67,0.45);
+}
+
+.piece-name-cell {
+  min-width: 130px;
+}
+.piece-name-ar {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #f0e0b0;
+}
+.piece-name-en {
+  display: block;
+  font-size: 11px;
+  color: rgba(200,184,136,0.5);
+}
+
+.qty-cell {
+  text-align: center;
+  color: #d4a843;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.specs-cell ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.specs-cell li {
+  font-size: 12px;
+  color: #a89878;
+  margin-bottom: 3px;
+  line-height: 1.4;
+}
+.specs-cell strong {
+  color: #c8b090;
+}
+
+.notes-cell {
+  font-size: 12px;
+  color: #8a7858;
+  font-style: italic;
+  min-width: 150px;
+}
+
+/* Print styles */
+@media print {
+  .carpenter-print-btn-row { display: none; }
+  body { background: white !important; color: black !important; }
+  .carpenter-table { background: white !important; }
+  .carpenter-table th, .carpenter-table td { color: black !important; border-color: #ccc !important; }
+  .room-name-ar, .piece-name-ar { color: #333 !important; }
+  .carpenter-section { padding: 20px !important; }
+}

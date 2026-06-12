@@ -1,0 +1,10 @@
+export { default as SofaSVG } from './SofaSVG';
+export { default as ReceptionTableSVG } from './ReceptionTableSVG';
+export { default as BedSVG } from './BedSVG';
+export { default as WardrobeSVG } from './WardrobeSVG';
+export { default as VanitySVG } from './VanitySVG';
+export { default as DiningTableSVG } from './DiningTableSVG';
+export { default as BarSideboardSVG } from './BarSideboardSVG';
+export { default as NicheSVG } from './NicheSVG';
+export { default as BabyWardrobeSVG } from './BabyWardrobeSVG';
+export { default as BabyBedSVG } from './BabyBedSVG';
