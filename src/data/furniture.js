@@ -12,7 +12,7 @@ export const rooms = [
         nameAr: 'الكنبة',
         nameEn: 'Sofa',
         qty: 3,
-        image: '/images/reception-sofa.jpg',
+        image: '/images/Reception-sofa.png',
         svgId: 'SofaSVG',
         specs: [
           { labelAr: 'الكمية', labelEn: 'Quantity', value: '3 قطع متطابقة' },
@@ -29,7 +29,7 @@ export const rooms = [
         nameAr: 'طاولة الاستقبال',
         nameEn: 'Center Table',
         qty: 1,
-        image: '/images/reception-table.jpg',
+        image: '/images/Reciption-table.png',
         svgId: 'ReceptionTableSVG',
         specs: [
           { labelAr: 'الكمية', labelEn: 'Quantity', value: '1 قطعة' },
@@ -51,7 +51,7 @@ export const rooms = [
         nameAr: 'السرير',
         nameEn: 'LED Bed',
         qty: 1,
-        image: '/images/bed.jpg',
+        image: '/images/Master-bed.png',
         svgId: 'BedSVG',
         specs: [
           { labelAr: 'الكمية', labelEn: 'Quantity', value: '1 قطعة' },
@@ -63,10 +63,10 @@ export const rooms = [
       },
       {
         id: 'wardrobe',
-        nameAr: 'خزانة الملابس',
-        nameEn: 'Wardrobe',
+        nameAr: 'دولاب الملابس',
+        nameEn: 'Master Drawer',
         qty: 1,
-        image: '/images/wardrobe-mirror.jpg',
+        image: '/images/Master-drawer.png',
         svgId: 'WardrobeSVG',
         specs: [
           { labelAr: 'الكمية', labelEn: 'Quantity', value: '1 قطعة' },
@@ -76,11 +76,25 @@ export const rooms = [
         ],
       },
       {
+        id: 'mirror-rack',
+        nameAr: 'المرايا والرف',
+        nameEn: 'Mirror & Rack',
+        qty: 1,
+        image: '/images/Master-mirror&rack.png',
+        svgId: 'WardrobeSVG',
+        specs: [
+          { labelAr: 'الكمية', labelEn: 'Quantity', value: '1 قطعة' },
+          { labelAr: 'النوع', labelEn: 'Type', value: 'مرايا مع رف علوي' },
+          { labelAr: 'الموقع', labelEn: 'Location', value: 'الحائط الأخير — غرفة النوم الرئيسية' },
+          { labelAr: 'الخلفية', labelEn: 'Back View', value: 'متوفرة' },
+        ],
+      },
+      {
         id: 'vanity',
         nameAr: 'طاولة التزيين',
         nameEn: 'Smart Vanity',
         qty: 1,
-        image: '/images/vanity.jpg',
+        image: '/images/Master-تسريحة.png',
         svgId: 'VanitySVG',
         specs: [
           { labelAr: 'الكمية', labelEn: 'Quantity', value: '1 قطعة' },
@@ -102,7 +116,7 @@ export const rooms = [
         nameAr: 'طاولة الطعام',
         nameEn: 'Dining Table',
         qty: 1,
-        image: '/images/dining-table.jpg',
+        image: '/images/Hall-table.png',
         svgId: 'DiningTableSVG',
         specs: [
           { labelAr: 'الكمية', labelEn: 'Quantity', value: '1 طاولة + 6 كراسي' },
@@ -117,7 +131,7 @@ export const rooms = [
         nameAr: 'وحدة البار',
         nameEn: 'Bar Sideboard',
         qty: 1,
-        image: '/images/bar-sideboard.jpg',
+        image: '/images/Hall-bar.png',
         svgId: 'BarSideboardSVG',
         specs: [
           { labelAr: 'الكمية', labelEn: 'Quantity', value: '1 قطعة' },
@@ -127,26 +141,19 @@ export const rooms = [
           { labelAr: 'المرايا', labelEn: 'Mirrors', value: '3 مرايا هندسية ذهبية ماسية فوقها' },
         ],
       },
-    ],
-  },
-  {
-    id: 'niche',
-    nameAr: 'النيتش',
-    nameEn: 'Niche',
-    pieces: [
       {
         id: 'display-cabinet',
-        nameAr: 'خزانة العرض الزجاجية',
-        nameEn: 'Glass Display Cabinet',
+        nameAr: 'النيتش — خزانة العرض',
+        nameEn: 'Niche Display Cabinet',
         qty: 1,
-        image: '/images/niche.jpg',
+        image: '/images/Hall-nich.png',
         svgId: 'NicheSVG',
         specs: [
           { labelAr: 'الكمية', labelEn: 'Quantity', value: '1 قطعة' },
           { labelAr: 'الرفوف', labelEn: 'Shelves', value: '5 رفوف زجاجية' },
           { labelAr: 'الإطار', labelEn: 'Frame', value: 'كريمي / ذهبي' },
           { labelAr: 'الإضاءة', labelEn: 'Lighting', value: 'شريط LED على الجانبين' },
-          { labelAr: 'الشكل', labelEn: 'Shape', value: 'طويل وضيق' },
+          { labelAr: 'الموقع', labelEn: 'Location', value: 'داخل قاعة الطعام' },
         ],
       },
     ],
@@ -161,7 +168,7 @@ export const rooms = [
         nameAr: 'خزانة الأطفال',
         nameEn: 'Baby Wardrobe',
         qty: 1,
-        image: '/images/baby-wardrobe.jpg',
+        image: '/images/Baby-drawer.png',
         svgId: 'BabyWardrobeSVG',
         specs: [
           { labelAr: 'الكمية', labelEn: 'Quantity', value: '1 قطعة' },
@@ -175,7 +182,7 @@ export const rooms = [
         nameAr: 'سرير الأطفال',
         nameEn: 'Baby Bed',
         qty: 2,
-        image: '/images/baby-bed.jpg',
+        image: '/images/Baby-bed.png',
         svgId: 'BabyBedSVG',
         specs: [
           { labelAr: 'الكمية', labelEn: 'Quantity', value: '2 سرير متطابق' },

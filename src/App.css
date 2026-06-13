@@ -1,280 +1,141 @@
-/* ── بيتنا App styles ── */
+/* ═══════════════════════════════════════════════
+   App — Full-Page Scroll Architecture
+   ═══════════════════════════════════════════════ */
 
-/* App root */
 .app-root {
-  min-height: 100vh;
-  background: #0d0d0f;
-  color: #c8b888;
   position: relative;
-  z-index: 1;
-}
-
-/* ── HEADER ── */
-.app-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: rgba(13,13,15,0.88);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(212,168,67,0.12);
-}
-
-.header-inner {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 24px;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  direction: rtl;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.brand-ar {
-  font-family: 'Cairo', sans-serif;
-  font-size: 24px;
-  font-weight: 800;
-  color: #d4a843;
-  letter-spacing: -0.5px;
-}
-
-.brand-sep {
-  color: rgba(212,168,67,0.3);
-  font-size: 20px;
-}
-
-.brand-en {
-  font-size: 13px;
-  color: rgba(212,168,67,0.45);
-  letter-spacing: 1px;
-  font-style: italic;
-}
-
-.app-nav {
-  display: flex;
-  gap: 4px;
-}
-
-.nav-link {
-  font-family: 'Cairo', sans-serif;
-  font-size: 14px;
-  color: rgba(212,168,67,0.6);
-  text-decoration: none;
-  padding: 6px 14px;
-  border-radius: 8px;
-  transition: all 0.2s;
-}
-.nav-link:hover {
-  color: #d4a843;
-  background: rgba(212,168,67,0.1);
-}
-
-/* ── HERO ── */
-.hero-section {
-  position: relative;
-  z-index: 1;
-  padding: 100px 24px 80px;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 100%;
+  height: 100vh;
   overflow: hidden;
+  background: #080706;
 }
 
-.hero-section::before {
-  content: '';
+/* ── Page container ── */
+.page-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+}
+
+/* Each page */
+.page {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(212,168,67,0.06) 0%, transparent 70%);
-  pointer-events: none;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  will-change: transform, opacity;
 }
 
-.hero-content {
-  position: relative;
-  z-index: 2;
-  max-width: 680px;
+/* ── Enter: slides in from bottom ── */
+.page-enter {
+  transform: translateY(100vh);
+  opacity: 0;
+  z-index: 10;
+  animation: pageEnter 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+/* Back direction: slides in from top */
+.page-enter-back {
+  transform: translateY(-100vh);
+  opacity: 0;
+  z-index: 10;
+  animation: pageEnterBack 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-.hero-badge {
-  display: inline-block;
-  font-family: 'Cairo', sans-serif;
-  font-size: 12px;
-  color: #d4a843;
-  background: rgba(212,168,67,0.1);
-  border: 1px solid rgba(212,168,67,0.25);
-  border-radius: 20px;
-  padding: 4px 18px;
-  margin-bottom: 20px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+/* ── Exit: slides up out ── */
+.page-exit {
+  z-index: 5;
+  animation: pageExit 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.page-exit-back {
+  z-index: 5;
+  animation: pageExitBack 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-.hero-title {
-  font-family: 'Cairo', sans-serif;
-  font-size: clamp(60px, 10vw, 96px);
-  font-weight: 900;
-  color: #d4a843;
-  margin: 0 0 20px;
-  line-height: 1;
-  letter-spacing: -2px;
-  text-shadow: 0 0 80px rgba(212,168,67,0.25);
+/* ── Idle (visible, not animating) ── */
+.page-idle {
+  z-index: 1;
+  transform: translateY(0);
+  opacity: 1;
 }
 
-.hero-subtitle {
-  font-family: 'Cairo', sans-serif;
-  font-size: 17px;
-  color: #a89060;
-  margin: 0 0 8px;
-  line-height: 1.7;
+@keyframes pageEnter {
+  from { transform: translateY(100vh); opacity: 0.3; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+@keyframes pageEnterBack {
+  from { transform: translateY(-100vh); opacity: 0.3; }
+  to   { transform: translateY(0);      opacity: 1; }
+}
+@keyframes pageExit {
+  from { transform: translateY(0);      opacity: 1; }
+  to   { transform: translateY(-100vh); opacity: 0; }
+}
+@keyframes pageExitBack {
+  from { transform: translateY(0);     opacity: 1; }
+  to   { transform: translateY(100vh); opacity: 0; }
 }
 
-.hero-subtitle-en {
-  font-size: 13px;
-  color: rgba(168,144,96,0.5);
-  margin: 0 0 36px;
-  font-style: italic;
-  direction: ltr;
-}
-
-.hero-actions {
+/* ── Nav dots (right side) ── */
+.nav-dots {
+  position: fixed;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 999;
   display: flex;
-  gap: 14px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 48px;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.btn-primary {
-  font-family: 'Cairo', sans-serif;
-  font-size: 15px;
-  color: #0d0d0f;
+.nav-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(212,168,67,0.25);
+  border: 1px solid rgba(212,168,67,0.4);
+  cursor: pointer;
+  transition: all 0.3s;
+  padding: 0;
+  outline: none;
+}
+.nav-dot.active {
   background: #d4a843;
-  border: none;
-  border-radius: 10px;
-  padding: 12px 28px;
-  text-decoration: none;
-  font-weight: 700;
-  transition: all 0.2s;
+  box-shadow: 0 0 10px rgba(212,168,67,0.6);
+  transform: scale(1.4);
 }
-.btn-primary:hover {
-  background: #e0b853;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(212,168,67,0.3);
+.nav-dot:hover:not(.active) {
+  background: rgba(212,168,67,0.5);
 }
 
-.btn-secondary {
-  font-family: 'Cairo', sans-serif;
-  font-size: 15px;
-  color: #d4a843;
-  background: rgba(212,168,67,0.08);
-  border: 1px solid rgba(212,168,67,0.3);
-  border-radius: 10px;
-  padding: 12px 28px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.2s;
-}
-.btn-secondary:hover {
-  background: rgba(212,168,67,0.16);
-  border-color: #d4a843;
-}
-
-.hero-stats {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
-  flex-wrap: wrap;
-}
-
-.stat {
+/* ── Scroll arrow hint ── */
+.scroll-hint {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 6px;
+  z-index: 20;
+  opacity: 0.5;
+  animation: bounceHint 2s ease-in-out infinite;
 }
-
-.stat-num {
-  font-family: 'Cairo', sans-serif;
-  font-size: 22px;
-  font-weight: 800;
-  color: #d4a843;
-}
-
-.stat-label {
-  font-family: 'Cairo', sans-serif;
-  font-size: 12px;
-  color: rgba(168,144,96,0.5);
-}
-
-.stat-divider {
+.scroll-hint-line {
   width: 1px;
-  height: 36px;
-  background: rgba(212,168,67,0.15);
+  height: 32px;
+  background: linear-gradient(to bottom, transparent, #d4a843);
+}
+.scroll-hint-arrow {
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid #d4a843;
+  border-bottom: 2px solid #d4a843;
+  transform: rotate(45deg);
 }
 
-/* ── CONTENT SECTIONS ── */
-.content-section {
-  position: relative;
-  z-index: 1;
-  padding: 80px 24px;
-  max-width: 1100px;
-  margin: 0 auto;
-  width: 100%;
-  box-sizing: border-box;
-  text-align: center;
-}
-
-.section-label {
-  font-size: 11px;
-  color: #d4a843;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  font-family: sans-serif;
-  margin-bottom: 10px;
-  opacity: 0.7;
-}
-
-.section-heading {
-  font-family: 'Cairo', sans-serif;
-  font-size: 36px;
-  font-weight: 800;
-  color: #f0e0b0;
-  margin: 0 0 12px;
-}
-
-.section-subheading {
-  font-family: 'Cairo', sans-serif;
-  font-size: 15px;
-  color: #8a7858;
-  margin: 0 0 44px;
-}
-
-/* ── FOOTER ── */
-.app-footer {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-  padding: 28px 24px;
-  border-top: 1px solid rgba(212,168,67,0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  font-family: 'Cairo', sans-serif;
-}
-
-/* ── RESPONSIVE ── */
-@media (max-width: 768px) {
-  .hero-section { padding: 70px 16px 50px; }
-  .content-section { padding: 50px 16px; }
-  .header-inner { padding: 0 16px; }
-  .app-nav { gap: 0; }
-  .nav-link { padding: 6px 10px; font-size: 13px; }
+@keyframes bounceHint {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%       { transform: translateX(-50%) translateY(6px); }
 }
