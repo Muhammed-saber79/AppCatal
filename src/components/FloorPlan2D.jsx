@@ -74,6 +74,7 @@ const _bedW = Math.floor(_babyRoomW * 0.60);
 const _bedSpacing = Math.floor((_babyRoomH - 76 - 28 - 76) / 4);
 const _bed1Y = BD + _bedSpacing;
 const _bed2Y = BD + _bedSpacing + 76 + _bedSpacing + 28 + _bedSpacing;
+const _comSp = Math.floor((_babyRoomH - 95 - 42 - 95) / 4); // matches baby room drawing
 const _recW = VW - BD - Math.floor(VW/2) - WL;
 const _recH = r1B - BD;
 const _sfW = 180, _sfH = 64;
@@ -99,6 +100,11 @@ const SPOTS = [
     x:BD+4,    y:BD+4,    w:_bedW+8,     h:r1B-BD-8,
     vx:BD+8,   vy:_bed1Y, vw:_bedW,      vh:76+_bedSpacing+28+_bedSpacing+76, ar:'أسرّة الأطفال' },
 
+  // Commode between the two baby beds — after baby-bed so it sits on top
+  { id:'baby-commode',
+    x:BD+6,    y:BD+_comSp+95+_comSp-2, w:28+4, h:42+4,
+    vx:BD+8,   vy:BD+_comSp+95+_comSp,  vw:28,  vh:42,   ar:'كومود' },
+
   { id:'sofa',
     x:babyR+WL+4, y:BD+4, w:VW-BD-babyR-WL-8, h:r1B-BD-8,
     vx:_sfTopX, vy:BD+10, vw:_sfW,        vh:_sfH,       ar:'الكنبة' },
@@ -106,6 +112,10 @@ const SPOTS = [
   { id:'reception-table',
     x:_ctX-4,  y:_ctY-4,  w:_ctW+8,     h:_ctH+8,
     vx:_ctX,   vy:_ctY,   vw:_ctW,       vh:_ctH,        ar:'طاولة وسط' },
+
+  { id:'tv-unit',
+    x:babyR+WL-2, y:BD+Math.floor((_recH-120)/2)-4, w:18+8, h:120+8,
+    vx:babyR+WL+2, vy:BD+Math.floor((_recH-120)/2), vw:18, vh:120, ar:'الشاشة' },
 
   { id:'dining-table',
     x:hallL+38, y:r1B+WL+44, w:228,      h:238,

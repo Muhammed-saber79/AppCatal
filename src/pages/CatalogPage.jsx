@@ -6,14 +6,16 @@ import FurniturePopup from '../components/FurniturePopup';
 const IMAGE_MAP = {
   'sofa':            '/images/Reception-sofa.png',
   'reception-table': '/images/Reciption-table.png',
+  'tv-unit':         '/images/Reception-tv-unit.png',
   'bed':             '/images/Master-bed.png',
   'wardrobe':        '/images/Master-mirror&rack.png',
   'vanity':          '/images/Master-تسريحة.png',
   'display-cabinet': '/images/Hall-nich.png',
-  'bar-sideboard':   '/images/Hall-bar.png',
+  'bar-sideboard':   '/images/Hall-bar.jpg',
   'dining-table':    '/images/Hall-table.png',
   'baby-wardrobe':   '/images/Baby-drawer.png',
   'baby-bed':        '/images/Baby-bed.png',
+  'baby-commode':    '/images/Baby-commode.png',
 };
 
 function CatCard({ piece, onSelect }) {
