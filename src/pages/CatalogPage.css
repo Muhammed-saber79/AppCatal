@@ -1,6 +1,7 @@
 .catalog-page {
   width: 100%;
   height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -152,10 +153,32 @@
 .cat-card:hover .cat-card-hint { background: var(--walnut); color: var(--cream); }
 
 @media (max-width: 700px) {
-  .catalog-top { padding: 14px 16px 0; }
+  .catalog-top { padding: 12px 0 0; }
+  .catalog-title { font-size: 22px; }
+  .catalog-subtitle { font-size: 13px; padding: 0 16px; }
+  /* tabs: one swipeable row instead of wrapping */
+  .catalog-tabs {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding: 10px 16px 8px;
+    scrollbar-width: none;
+  }
+  .catalog-tabs::-webkit-scrollbar { display: none; }
+  .cat-tab { flex-shrink: 0; padding: 7px 16px; font-size: 14px; }
   .catalog-scroll { padding: 10px 16px 100px; }
   .cat-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
   .cat-card-media { height: 130px; }
   .cat-card-name { font-size: 15px; }
   .cat-spec-chip { font-size: 12px; }
+}
+
+/* phone held sideways: compact header */
+@media (max-height: 500px) and (orientation: landscape) {
+  .catalog-top { padding: 6px 90px 0 16px; display: flex; align-items: center; gap: 16px; }
+  .catalog-title { font-size: 18px; white-space: nowrap; }
+  .catalog-subtitle { display: none; }
+  .catalog-tabs { padding: 4px 0; flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; }
+  .cat-tab { flex-shrink: 0; padding: 5px 14px; font-size: 13px; }
+  .catalog-scroll { padding: 8px 90px 24px 16px; }
 }

@@ -2,6 +2,7 @@
   position: relative;
   width: 100%;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -27,6 +28,7 @@
 .door-sconce {
   position: absolute;
   top: 6vh;
+  top: 6dvh;
   left: 50%;
   width: 46px;
   height: 14px;
@@ -40,7 +42,9 @@
   position: relative;
   width: min(360px, 74vw);
   height: min(62vh, 560px);
+  height: min(62dvh, 560px);
   margin-top: 4vh;
+  margin-top: 4dvh;
   padding: 14px 14px 0;
   border-radius: 8px 8px 0 0;
   background: linear-gradient(90deg, #5E4231, #6e4f3a 50%, #5E4231);
@@ -149,6 +153,7 @@
   right: 0;
   /* starts exactly at the door's threshold (door is centered with a 4vh top margin) */
   height: calc(48vh - min(31vh, 280px));
+  height: calc(48dvh - min(31dvh, 280px));
   background:
     linear-gradient(180deg, rgba(0,0,0,0.12), transparent 30%),
     repeating-linear-gradient(90deg, #EEE8DE 0 120px, #E4DCCF 120px 122px);
@@ -158,6 +163,7 @@
 .door-cta {
   position: absolute;
   bottom: max(4vh, calc((48vh - min(31vh, 280px)) / 2 - 28px));
+  bottom: max(4dvh, calc((48dvh - min(31dvh, 280px)) / 2 - 28px));
   z-index: 3;
   display: inline-flex;
   align-items: center;

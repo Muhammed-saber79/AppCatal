@@ -1,6 +1,7 @@
 .carpenter-page {
   width: 100%;
   height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -160,4 +161,44 @@
   .side-nav, .print-btn { display: none !important; }
   .carpenter-top, .carpenter-scroll { padding: 0 0 12px !important; }
   .carp-table tr { break-inside: avoid; }
+}
+
+/* ── phones: the table becomes one card per piece ── */
+@media (max-width: 700px) {
+  .carp-table-wrap { overflow: visible; border: none; background: none; }
+  .carp-table { min-width: 0; }
+  .carp-table thead { display: none; }
+  .carp-table, .carp-table tbody, .carp-table tr, .carp-table td { display: block; width: 100% !important; }
+  .carp-table tr {
+    margin-bottom: 14px;
+    border-radius: var(--radius);
+    background: var(--cream);
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .carp-table td { border-top: none; padding: 10px 14px; }
+  /* the room name repeats as a header only on the first piece of each room */
+  .room-cell {
+    text-align: right;
+    padding: 8px 14px !important;
+    background: var(--walnut) !important;
+    color: var(--cream) !important;
+    font-size: 15px;
+  }
+  .piece-cell { display: flex !important; flex-direction: column; gap: 6px; padding-top: 14px !important; }
+  .piece-photos figure, .piece-photos figure:only-child { width: calc(50% - 3px); }
+  .piece-photos figure:only-child { width: 100%; }
+  .piece-cell span { font-size: 19px; color: var(--walnut-deep); }
+  .qty-cell { text-align: right; font-size: 14px; padding-top: 0 !important; }
+  .qty-cell::before { content: 'العدد: '; font-weight: 700; color: var(--ink-soft); }
+  .specs-cell { font-size: 14px; }
+  .specs-cell li { padding: 4px 0; border-bottom: 1px dashed var(--line); }
+  .specs-cell li:last-child { border-bottom: none; }
+  .notes-cell { padding-bottom: 14px !important; }
+  .notes-cell.is-empty { display: none; }
+  .notes-cell::before { content: "ملاحظات: "; font-weight: 700; color: var(--walnut-deep); }
+  .palette-list { grid-template-columns: 1fr 1fr; }
+  .palette-list li { grid-template-columns: 32px 1fr; padding: 6px; }
+  .swatch { width: 32px; height: 32px; }
+  .swatch-value { font-size: 13px; }
 }

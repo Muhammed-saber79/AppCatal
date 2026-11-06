@@ -56,15 +56,34 @@ export default function useFullPageScroll(totalSections, initial = 0) {
     return () => window.removeEventListener('wheel', onWheel);
   }, [next, back]);
 
-  // Touch
+  // Touch — a swipe only changes the page when it is clearly vertical, and never
+  // while the finger is scrolling a list (catalog, carpenter file) that can still move.
   useEffect(() => {
-    let startY = 0;
-    const onTouchStart = (e) => { startY = e.touches[0].clientY; };
+    let start = null;
+    const onTouchStart = (e) => {
+      const t = e.touches[0];
+      const box = e.target.closest?.('.catalog-scroll, .carpenter-scroll');
+      start = {
+        x: t.clientX, y: t.clientY, time: Date.now(), box,
+        atTop: box ? box.scrollTop <= 0 : true,
+        atBottom: box ? box.scrollTop + box.clientHeight >= box.scrollHeight - 2 : true,
+        // horizontal strips (chips, thumbnails, wide tables) never change the page
+        inStrip: !!e.target.closest?.('.piece-chips, .room-buttons, .catalog-tabs, .fp-thumbs'),
+      };
+    };
     const onTouchEnd = (e) => {
-      if (isOverlayOpen()) return;
-      const dy = startY - e.changedTouches[0].clientY;
-      if (dy > 50) next();
-      else if (dy < -50) back();
+      if (!start || isOverlayOpen() || start.inStrip) { start = null; return; }
+      const t = e.changedTouches[0];
+      const dy = start.y - t.clientY;
+      const dx = start.x - t.clientX;
+      const s = start; start = null;
+      if (Math.abs(dy) < 70 || Math.abs(dy) < Math.abs(dx) * 1.5) return; // too short or sideways
+      if (s.box) {
+        // inside a list: only leave it when it was already at its edge before the swipe
+        if (dy > 0 && !s.atBottom) return;
+        if (dy < 0 && !s.atTop) return;
+      }
+      if (dy > 0) next(); else back();
     };
     window.addEventListener('touchstart', onTouchStart, { passive: true });
     window.addEventListener('touchend', onTouchEnd, { passive: true });

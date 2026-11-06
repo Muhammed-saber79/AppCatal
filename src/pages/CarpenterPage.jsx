@@ -74,7 +74,7 @@ export default function CarpenterPage() {
                           ))}
                         </ul>
                       </td>
-                      <td className="notes-cell">{notes.length ? notes.join(' — ') : '—'}</td>
+                      <td className={`notes-cell ${notes.length ? '' : 'is-empty'}`}>{notes.length ? notes.join(' — ') : '—'}</td>
                     </tr>
                   );
                 })

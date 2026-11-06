@@ -2,6 +2,7 @@
   position: relative;
   width: 100%;
   height: 100vh;
+  height: 100dvh;
   display: grid;
   grid-template-rows: auto 1fr auto;
   overflow: hidden;
@@ -312,4 +313,22 @@
 @media (max-width: 700px) {
   .journey-scene { --ratio: 1.45; padding: 4px; border-radius: 14px; }
   .view-switch button { padding: 5px 12px; font-size: 13px; }
+}
+
+/* phone held sideways: give the height to the scene */
+@media (max-height: 500px) and (orientation: landscape) {
+  .journey-top { padding: 6px 90px 0 16px; display: flex; align-items: center; justify-content: center; gap: 14px; }
+  .journey-crumbs { display: none; }
+  .journey-title { font-size: 18px; }
+  .journey-hint { display: none; }
+  .view-switch { margin-top: 0; }
+  .view-switch button { padding: 4px 12px; font-size: 12px; }
+  .journey-stage { padding: 4px 90px 4px 16px; }
+  .journey-scene { padding: 4px; --ratio: 2.1; }
+  .journey-bottom { padding: 4px 90px 6px 16px; gap: 4px; }
+  .room-btn { padding: 6px 14px; font-size: 13px; }
+  .piece-chip { padding: 3px 10px 3px 3px; font-size: 12px; }
+  .piece-chip img { width: 30px; height: 30px; }
+  .nav-room { padding: 6px 10px; font-size: 12px; }
+  .back-house { display: none; }
 }

@@ -16,6 +16,7 @@
 .fp-card {
   width: min(1120px, 100%);
   height: min(720px, calc(100vh - 40px));
+  height: min(720px, calc(100dvh - 40px));
   display: grid;
   grid-template-columns: 1.55fr 1fr;
   overflow: hidden;
@@ -295,6 +296,7 @@
 .fp-zoom img {
   max-width: 94vw;
   max-height: 92vh;
+  max-height: 92dvh;
   object-fit: contain;
   border-radius: 10px;
   cursor: default;
@@ -318,22 +320,45 @@
 /* the side navigation steps aside while a card is open */
 body:has(.fp-popup-overlay, .fp-zoom) .side-nav { display: none; }
 
-/* ── phones / narrow: stack ── */
+/* ── phones / narrow: one scrolling sheet, big photo on top ── */
 @media (max-width: 860px) {
   .fp-popup-overlay { padding: 0; align-items: flex-end; }
   .fp-card {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
+    position: relative;
+    display: block;
     height: 94vh;
+    height: 94dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     border-radius: 24px 24px 0 0;
   }
-  .fp-card { position: relative; }
-  .fp-viewer { padding: 12px; height: 46vh; }
-  .fp-close { position: absolute; top: 14px; left: 14px; z-index: 3; width: 40px; height: 40px; box-shadow: 0 4px 12px rgba(46,34,26,0.2); }
-  .fp-thumb { width: 84px; }
-  .fp-thumb img { height: 50px; }
-  .fp-info { padding: 14px 16px 16px; }
-  .fp-name { font-size: 22px; }
-  .fp-spec { grid-template-columns: 80px 1fr; padding: 9px 0; }
-  .fp-spec dd { font-size: 14px; }
+  .fp-viewer { padding: 12px 12px 10px; gap: 10px; }
+  .fp-tabs { align-self: center; }
+  .fp-tabs button { padding: 6px 14px; font-size: 13px; }
+  .fp-stage { flex: none; aspect-ratio: 4 / 3; width: 100%; }
+  .fp-sketch { flex: none; aspect-ratio: 4 / 3; padding: 12px; }
+  .fp-option-badge {
+    top: 8px; right: 8px; left: 8px;
+    width: fit-content; max-width: calc(100% - 16px);
+    padding: 4px 12px; font-size: 12px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .fp-nav { width: 38px; height: 38px; font-size: 22px; background: rgba(255,255,255,0.8); }
+  .fp-nav-prev { right: 8px; }
+  .fp-nav-next { left: 8px; }
+  .fp-counter { bottom: 8px; right: 8px; }
+  .fp-zoom-btn { bottom: 8px; left: 8px; width: 36px; height: 36px; }
+  .fp-thumb { width: 78px; font-size: 11px; }
+  .fp-thumb img { height: 48px; }
+  .fp-info { padding: 14px 16px 24px; }
+  .fp-head { padding-left: 52px; }  /* room for the close button */
+  .fp-name { font-size: 24px; }
+  .fp-specs { overflow: visible; }
+  .fp-spec { grid-template-columns: 84px 1fr; padding: 10px 0; }
+  .fp-spec dd { font-size: 15px; }
+  .fp-actions { position: sticky; bottom: 0; padding: 12px 0 0; background: linear-gradient(transparent, var(--cream) 30%); }
+  .fp-close {
+    position: fixed; top: calc(6dvh + 12px); left: 14px; z-index: 5;
+    width: 42px; height: 42px; box-shadow: 0 4px 14px rgba(46,34,26,0.25);
+  }
 }

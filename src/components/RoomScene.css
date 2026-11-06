@@ -343,3 +343,24 @@
 
 .tag-inside .scene-tag { top: 10px; transform: translate(-50%, 0); }
 .scene-bedding { aspect-ratio: 2.6; }
+
+/* small screens: name tags crowd the scene — show a soft pulsing dot instead;
+   the piece names are listed in the buttons right under the scene */
+@media (max-width: 560px), (max-height: 500px) {
+  .scene-tag {
+    width: 14px;
+    height: 14px;
+    padding: 0;
+    font-size: 0;
+    border: 2px solid var(--cream);
+    background: var(--walnut);
+    box-shadow: 0 0 0 0 rgba(132,95,71,0.6);
+    animation: tagPulse 2s ease-out infinite;
+  }
+  .tag-inside .scene-tag { top: 8px; }
+}
+@keyframes tagPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(132,95,71,0.55); }
+  70%  { box-shadow: 0 0 0 10px rgba(132,95,71,0); }
+  100% { box-shadow: 0 0 0 0 rgba(132,95,71,0); }
+}
