@@ -7,7 +7,7 @@
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  background: #080706;
+  background: var(--wall);
 }
 
 /* ── Page container ── */
@@ -77,65 +77,51 @@
 }
 
 /* ── Nav dots (right side) ── */
-.nav-dots {
+/* ── Side navigation: icon + label, big tap targets ── */
+.side-nav {
   position: fixed;
-  right: 24px;
+  right: 16px;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 999;
+  z-index: 400;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 22px;
+  background: rgba(246,241,232,0.82);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow);
 }
 
-.nav-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: rgba(212,168,67,0.25);
-  border: 1px solid rgba(212,168,67,0.4);
-  cursor: pointer;
-  transition: all 0.3s;
-  padding: 0;
-  outline: none;
-}
-.nav-dot.active {
-  background: #d4a843;
-  box-shadow: 0 0 10px rgba(212,168,67,0.6);
-  transform: scale(1.4);
-}
-.nav-dot:hover:not(.active) {
-  background: rgba(212,168,67,0.5);
-}
-
-/* ── Scroll arrow hint ── */
-.scroll-hint {
-  position: absolute;
-  bottom: 28px;
-  left: 50%;
-  transform: translateX(-50%);
+.side-nav-btn {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  z-index: 20;
-  opacity: 0.5;
-  animation: bounceHint 2s ease-in-out infinite;
+  gap: 2px;
+  width: 64px;
+  padding: 8px 4px;
+  border: none;
+  border-radius: 16px;
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
 }
-.scroll-hint-line {
-  width: 1px;
-  height: 32px;
-  background: linear-gradient(to bottom, transparent, #d4a843);
-}
-.scroll-hint-arrow {
-  width: 10px;
-  height: 10px;
-  border-right: 2px solid #d4a843;
-  border-bottom: 2px solid #d4a843;
-  transform: rotate(45deg);
-}
+.side-nav-btn:hover { background: var(--gold-soft); color: var(--ink); }
+.side-nav-btn.active { background: var(--walnut); color: var(--cream); }
+.side-nav-icon { font-size: 22px; line-height: 1; }
+.side-nav-label { font-size: 12px; font-weight: 700; }
 
-@keyframes bounceHint {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50%       { transform: translateX(-50%) translateY(6px); }
+@media (max-width: 700px) {
+  /* bottom tab bar on phones */
+  .side-nav {
+    top: auto;
+    bottom: 10px;
+    right: 50%;
+    transform: translateX(50%);
+    flex-direction: row;
+    border-radius: 20px;
+  }
+  .side-nav-btn { width: 66px; }
 }

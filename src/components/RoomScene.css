@@ -1,0 +1,345 @@
+/* ── Eye-level room scene ── */
+.scene {
+  --px: 0;
+  --py: 0;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--wall);
+  isolation: isolate;
+  animation: sceneIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes sceneIn {
+  from { opacity: 0; transform: scale(1.08); filter: blur(6px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+
+/* every layer slides a little with the pointer — deeper layers less */
+.scene-layer,
+.scene-item {
+  transform: translate3d(calc(var(--px) * var(--depth) * -18px), calc(var(--py) * var(--depth) * -8px), 0);
+  will-change: transform;
+}
+
+/* wall — overscan so edges never show while moving */
+.scene-wall {
+  position: absolute;
+  top: 0;
+  left: -4%;
+  right: -4%;
+  background:
+    radial-gradient(ellipse 60% 70% at 50% 18%, rgba(255,246,230,0.95) 0%, rgba(255,246,230,0) 70%),
+    radial-gradient(rgba(94,66,49,0.045) 1px, transparent 1px) 0 0 / 5px 5px,
+    linear-gradient(180deg, #EDE3D4 0%, #E3D6C3 100%);
+}
+/* recessed ceiling light (warm cove) */
+.scene-cove {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 7%;
+  background: linear-gradient(180deg, #D9CAB4, #E6DAC8);
+  box-shadow: 0 6px 30px 6px rgba(255,214,150,0.55);
+}
+/* window with sheer curtain & light */
+.scene-window {
+  position: absolute;
+  top: 14%;
+  width: 15%;
+  height: 70%;
+  border-radius: 4px;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,0.0) 0 46%, rgba(132,95,71,0.25) 46% 54%, rgba(255,255,255,0) 54%),
+    linear-gradient(180deg, #FFF9EE, #F6EAD3);
+  box-shadow: inset 0 0 0 6px #F2E8D9, 0 0 60px 10px rgba(255,236,200,0.6);
+}
+.scene-window::after { /* curtain */
+  content: '';
+  position: absolute;
+  inset: -6% -14%;
+  /* soft sheer folds, gathered at both sides */
+  background:
+    repeating-linear-gradient(90deg, rgba(255,252,246,0.75) 0 7px, rgba(236,224,206,0.75) 14px, rgba(255,252,246,0.75) 21px),
+    linear-gradient(180deg, rgba(255,255,255,0.4), rgba(230,216,196,0.4));
+  -webkit-mask: linear-gradient(90deg, #000 0 24%, rgba(0,0,0,0.25) 34%, transparent 42% 58%, rgba(0,0,0,0.25) 66%, #000 76%);
+          mask: linear-gradient(90deg, #000 0 24%, rgba(0,0,0,0.25) 34%, transparent 42% 58%, rgba(0,0,0,0.25) 66%, #000 76%);
+  border-radius: 2px;
+}
+.window-left  .scene-window { left: 6%; }
+.window-right .scene-window { right: 6%; }
+
+.scene-skirting {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2.6%;
+  background: linear-gradient(180deg, #F4EEE4, #DCCFBC);
+  box-shadow: 0 -1px 0 rgba(94,66,49,0.15);
+}
+
+/* floor — a real perspective plane */
+.scene-floor-wrap {
+  position: absolute;
+  bottom: 0;
+  left: -10%;
+  right: -10%;
+  perspective: 520px;
+  perspective-origin: 50% 0%;
+  overflow: hidden;
+}
+.scene-floor {
+  position: absolute;
+  inset: 0 0 -60% 0;
+  transform-origin: 50% 0%;
+  transform: rotateX(62deg);
+}
+.floor-marble .scene-floor {
+  background:
+    linear-gradient(90deg, rgba(190,175,155,0.55) 1px, transparent 1px) 0 0 / 120px 120px,
+    linear-gradient(0deg, rgba(190,175,155,0.55) 1px, transparent 1px) 0 0 / 120px 120px,
+    radial-gradient(ellipse 30% 8% at 30% 40%, rgba(170,155,135,0.18), transparent),
+    linear-gradient(180deg, #F3EEE6, #FBF8F3);
+}
+.floor-wood .scene-floor {
+  background:
+    linear-gradient(90deg, rgba(150,115,80,0.35) 1px, transparent 1px) 0 0 / 70px 100%,
+    repeating-linear-gradient(0deg, rgba(150,115,80,0.12) 0 1px, transparent 1px 260px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.05) 0 3px, transparent 3px 11px),
+    linear-gradient(180deg, #CDAF86, #E2CBA8);
+}
+/* reflected window light on the floor */
+.scene-sunlight {
+  position: absolute;
+  top: 0;
+  width: 32%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(255,246,226,0.75), rgba(255,246,226,0));
+  -webkit-mask: linear-gradient(90deg, transparent, #000 30% 70%, transparent);
+          mask: linear-gradient(90deg, transparent, #000 30% 70%, transparent);
+  filter: blur(6px);
+}
+.window-left  .scene-sunlight { left: 6%;  transform: skewX(18deg); }
+.window-right .scene-sunlight { right: 6%; transform: skewX(-18deg); }
+
+/* furniture */
+.scene-item {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  translate: -50% 0;
+  aspect-ratio: auto;
+  animation: itemIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--delay);
+  outline: none;
+}
+.scene-item img {
+  height: 100%;
+  width: auto;
+  max-width: none;
+  position: relative;
+  z-index: 1;
+  /* warm grade so photos from different shops look like one room */
+  filter: sepia(0.12) saturate(0.95) brightness(1.02) drop-shadow(0 2px 3px rgba(60,40,25,0.25));
+  transition: filter 0.25s, transform 0.25s;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.scene-item:hover img,
+.scene-item:focus-visible img {
+  transform: translateY(-4px);
+  filter: sepia(0.08) saturate(1) brightness(1.06) drop-shadow(0 0 2px #fff) drop-shadow(0 0 10px rgba(176,141,87,0.9));
+}
+@keyframes itemIn {
+  from { opacity: 0; translate: -50% 30px; }
+  to   { opacity: 1; translate: -50% 0; }
+}
+
+/* contact shadow under each piece */
+.scene-shadow {
+  position: absolute;
+  bottom: -3%;
+  left: 6%;
+  right: 6%;
+  height: 12%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(60,40,25,0.45), rgba(60,40,25,0) 70%);
+  filter: blur(4px);
+}
+.on-wall img { filter: sepia(0.12) drop-shadow(0 12px 10px rgba(60,40,25,0.3)); }
+
+/* name tag */
+.scene-tag {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  z-index: 2;
+  transform: translate(-50%, -100%);
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(58,45,35,0.88);
+  color: var(--cream);
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0.92;
+  transition: background 0.2s;
+}
+.scene-item:hover .scene-tag { background: var(--walnut); opacity: 1; }
+
+/* foreground: vignette + warm glow, moves the most */
+.scene-front {
+  position: absolute;
+  inset: -4%;
+  pointer-events: none;
+  z-index: 200;
+  background:
+    radial-gradient(ellipse 85% 75% at 50% 45%, transparent 55%, rgba(58,40,26,0.28) 100%),
+    radial-gradient(ellipse 40% 30% at 50% 0%, rgba(255,224,170,0.25), transparent 70%);
+}
+
+@media (max-width: 700px) {
+  .scene-tag { font-size: 11px; padding: 2px 8px; }
+  .scene-mirror { border-width: 4px; }
+}
+
+/* standing floor mirror — walnut frame, warm soft reflection */
+.scene-mirror {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  aspect-ratio: 0.32;
+  border-radius: 999px 999px 26px 26px;
+  border: 7px solid var(--walnut);
+  background:
+    linear-gradient(115deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.55) 38%, rgba(255,255,255,0) 46%),
+    linear-gradient(115deg, rgba(255,255,255,0) 52%, rgba(255,255,255,0.3) 56%, rgba(255,255,255,0) 60%),
+    linear-gradient(180deg, #E9DED0 0%, #D8C8B2 62%, #CDB28C 100%);
+  box-shadow: inset 0 0 18px rgba(86,72,54,0.35), 0 8px 14px rgba(60,40,25,0.25);
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.scene-item:hover .scene-mirror { transform: translateY(-4px); box-shadow: inset 0 0 18px rgba(86,72,54,0.35), 0 0 12px rgba(176,141,87,0.9); }
+
+/* coffee table — bronze glass top with gold edge on a beige capsule base */
+.scene-coffee {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  aspect-ratio: 2.6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.25s;
+}
+.scene-item:hover .scene-coffee { transform: translateY(-4px); }
+.scene-coffee-top {
+  width: 100%;
+  height: 24%;
+  border-radius: 50%;
+  background:
+    linear-gradient(100deg, rgba(255,255,255,0) 20%, rgba(255,255,255,0.45) 32%, rgba(255,255,255,0) 44%),
+    linear-gradient(180deg, rgba(120,98,72,0.55), rgba(86,72,54,0.7));
+  border: 3px solid #C9A86A;
+  box-shadow: 0 6px 10px rgba(60,40,25,0.25);
+  position: relative;
+  z-index: 1;
+}
+.scene-coffee-base {
+  width: 62%;
+  flex: 1;
+  margin-top: -5%;
+  border-radius: 999px / 40%;
+  background: linear-gradient(90deg, #D9C8AE, #F1E7D7 45%, #CDB99B);
+  box-shadow: inset 0 -6px 10px rgba(94,66,49,0.18);
+}
+
+.scene-item img.flip { transform: scaleX(-1); }
+.scene-item:hover img.flip, .scene-item:focus-visible img.flip { transform: scaleX(-1) translateY(-4px); }
+
+/* wall-mounted TV */
+.scene-tv-screen {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 4px;
+  border: 3px solid #1d1a17;
+  background:
+    linear-gradient(120deg, rgba(255,255,255,0) 35%, rgba(255,255,255,0.08) 45%, rgba(255,255,255,0) 55%),
+    linear-gradient(180deg, #2b2724, #151311);
+  box-shadow: 0 14px 22px rgba(40,28,18,0.35);
+}
+
+/* three bronze pebble mirrors (above the bar) */
+.scene-pebbles {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  aspect-ratio: 1.45;
+  transition: transform 0.25s;
+}
+.scene-item:hover .scene-pebbles { transform: translateY(-4px); }
+.pebble {
+  position: absolute;
+  background:
+    linear-gradient(125deg, rgba(255,255,255,0) 30%, rgba(255,246,228,0.45) 42%, rgba(255,255,255,0) 54%),
+    linear-gradient(180deg, #8f7556, #5e4a37);
+  box-shadow: 0 10px 14px rgba(40,28,18,0.3), inset 0 0 0 2px rgba(176,141,87,0.6);
+}
+.pebble-1 { left: 0;   top: 0;   width: 44%; height: 96%; border-radius: 58% 42% 46% 54% / 38% 40% 60% 62%; }
+.pebble-2 { left: 50%; top: 2%;  width: 30%; height: 52%; border-radius: 52% 48% 40% 60% / 50% 46% 54% 50%; }
+.pebble-3 { left: 48%; top: 60%; width: 46%; height: 38%; border-radius: 60% 40% 52% 48% / 58% 54% 46% 42%; }
+
+/* bedding in front of the master headboard */
+.scene-bedding {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  aspect-ratio: 2.3;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s;
+}
+.scene-item:hover .scene-bedding { transform: translateY(-3px); }
+.bedding-pillows {
+  display: flex;
+  justify-content: center;
+  gap: 4%;
+  height: 26%;
+  margin-bottom: -6%;
+  position: relative;
+  z-index: 1;
+}
+.bedding-pillows span {
+  width: 30%;
+  border-radius: 40% / 50%;
+  background: linear-gradient(180deg, #FFFDF9, #EDE4D6);
+  box-shadow: 0 3px 6px rgba(60,40,25,0.15);
+}
+.bedding-throw {
+  flex: 1;
+  border-radius: 10px 10px 4px 4px;
+  background:
+    linear-gradient(180deg, #FBF8F2 0 38%, transparent 38%),
+    repeating-linear-gradient(90deg, rgba(150,120,90,0.12) 0 2px, transparent 2px 18px),
+    linear-gradient(180deg, #E3D5BF, #D2C0A4);
+  box-shadow: inset 0 -8px 14px rgba(94,66,49,0.15);
+}
+.bedding-base {
+  height: 22%;
+  border-radius: 0 0 6px 6px;
+  background: linear-gradient(180deg, #8d6649, var(--walnut-deep));
+  box-shadow: 0 10px 14px rgba(40,28,18,0.3);
+}
+
+.tag-inside .scene-tag { top: 10px; transform: translate(-50%, 0); }
+.scene-bedding { aspect-ratio: 2.6; }

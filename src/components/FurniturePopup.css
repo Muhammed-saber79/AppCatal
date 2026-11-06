@@ -1,0 +1,339 @@
+/* ── Piece card ── */
+.fp-popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(46,34,26,0.5);
+  backdrop-filter: blur(10px);
+  animation: fpFade 0.2s ease;
+}
+@keyframes fpFade { from { opacity: 0; } to { opacity: 1; } }
+
+.fp-card {
+  width: min(1120px, 100%);
+  height: min(720px, calc(100vh - 40px));
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  overflow: hidden;
+  border-radius: 26px;
+  background: var(--cream);
+  box-shadow: 0 40px 90px rgba(46,34,26,0.4), 0 0 0 1px rgba(176,141,87,0.25);
+  animation: fpRise 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes fpRise { from { transform: translateY(28px) scale(0.97); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* ── viewer (photos / sketch) ── */
+.fp-viewer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  padding: 16px;
+  background: linear-gradient(160deg, #EFE6D8, #E3D6C3);
+}
+.fp-tabs {
+  align-self: flex-start;
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  box-shadow: 0 2px 8px rgba(74,52,36,0.08);
+}
+.fp-tabs button {
+  padding: 7px 16px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.fp-tabs button.on { background: var(--walnut); color: var(--cream); }
+
+.fp-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 18px;
+  background: #F7F2EA;
+  box-shadow: inset 0 0 0 1px rgba(94,66,49,0.08);
+}
+.fp-stage-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transform: scale(1.03);
+  transition: opacity 0.45s ease, transform 0.6s ease;
+  cursor: zoom-in;
+  pointer-events: none;
+}
+.fp-stage-img.on { opacity: 1; transform: none; pointer-events: auto; }
+
+.fp-option-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--walnut-deep);
+  color: var(--cream);
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(46,34,26,0.25);
+}
+.fp-option-badge.plain { background: rgba(246,241,232,0.94); color: var(--walnut-deep); }
+
+.fp-nav {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.88);
+  color: var(--walnut-deep);
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(46,34,26,0.18);
+  transition: background 0.2s, transform 0.2s;
+}
+.fp-nav:hover { background: var(--walnut); color: var(--cream); transform: scale(1.06); }
+.fp-nav-prev { right: 12px; }   /* RTL: previous on the right */
+.fp-nav-next { left: 12px; }
+.fp-counter {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(46,34,26,0.7);
+  color: var(--cream);
+  font-size: 13px;
+  font-weight: 700;
+}
+.fp-zoom-btn {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: none;
+  background: rgba(255,255,255,0.88);
+  color: var(--walnut-deep);
+  font-size: 18px;
+  cursor: pointer;
+}
+.fp-zoom-btn:hover { background: var(--walnut); color: var(--cream); }
+
+.fp-thumbs {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 2px;
+}
+.fp-thumb {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 104px;
+  padding: 4px;
+  border-radius: 14px;
+  border: 2px solid transparent;
+  background: rgba(255,255,255,0.6);
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+.fp-thumb img {
+  width: 100%;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.fp-thumb:hover { background: #fff; }
+.fp-thumb.on { border-color: var(--walnut); background: #fff; color: var(--walnut-deep); }
+
+.fp-photo-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--ink-soft);
+}
+.fp-photo-placeholder span { font-size: 42px; }
+
+.fp-sketch {
+  flex: 1;
+  min-height: 0;
+  padding: 20px;
+  border-radius: 18px;
+  background: #2b211a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── info ── */
+.fp-info {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 22px 22px 18px;
+}
+.fp-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+.fp-room {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--gold-soft);
+  color: var(--walnut-deep);
+  font-size: 12px;
+  font-weight: 700;
+}
+.fp-name {
+  margin-top: 6px;
+  font-size: clamp(24px, 2.6vw, 32px);
+  font-weight: 900;
+  line-height: 1.2;
+  color: var(--walnut-deep);
+}
+.fp-qty { font-size: 14px; color: var(--ink-soft); }
+.fp-close {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+  font-size: 16px;
+  cursor: pointer;
+}
+.fp-close:hover { background: var(--walnut); color: var(--cream); }
+
+.fp-options-note {
+  margin-top: 14px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--gold-soft);
+  border: 1px dashed var(--gold);
+  color: var(--walnut-deep);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.fp-specs {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  margin-top: 10px;
+  padding-left: 4px;
+}
+.fp-spec {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+.fp-spec:last-child { border-bottom: none; }
+.fp-spec dt { font-size: 13px; font-weight: 700; color: var(--gold); }
+.fp-spec dd { font-size: 15px; font-weight: 600; color: var(--ink); line-height: 1.55; }
+
+.fp-actions { padding-top: 12px; }
+.fp-action {
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: 1.5px solid var(--walnut);
+  background: #fff;
+  color: var(--walnut-deep);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.fp-action:hover, .fp-action.on { background: var(--walnut); color: var(--cream); }
+
+/* ── full-screen photo ── */
+.fp-zoom {
+  position: fixed;
+  inset: 0;
+  z-index: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(30,22,16,0.94);
+  cursor: zoom-out;
+}
+.fp-zoom img {
+  max-width: 94vw;
+  max-height: 92vh;
+  object-fit: contain;
+  border-radius: 10px;
+  cursor: default;
+}
+.fp-zoom-close, .fp-zoom-nav {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: var(--cream);
+  color: var(--ink);
+  font-size: 18px;
+  cursor: pointer;
+}
+.fp-zoom-close { top: 18px; right: 18px; }
+.fp-zoom-nav { top: 50%; translate: 0 -50%; font-size: 30px; line-height: 1; }
+.fp-zoom-prev { right: 18px; }
+.fp-zoom-next { left: 18px; }
+
+/* the side navigation steps aside while a card is open */
+body:has(.fp-popup-overlay, .fp-zoom) .side-nav { display: none; }
+
+/* ── phones / narrow: stack ── */
+@media (max-width: 860px) {
+  .fp-popup-overlay { padding: 0; align-items: flex-end; }
+  .fp-card {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    height: 94vh;
+    border-radius: 24px 24px 0 0;
+  }
+  .fp-card { position: relative; }
+  .fp-viewer { padding: 12px; height: 46vh; }
+  .fp-close { position: absolute; top: 14px; left: 14px; z-index: 3; width: 40px; height: 40px; box-shadow: 0 4px 12px rgba(46,34,26,0.2); }
+  .fp-thumb { width: 84px; }
+  .fp-thumb img { height: 50px; }
+  .fp-info { padding: 14px 16px 16px; }
+  .fp-name { font-size: 22px; }
+  .fp-spec { grid-template-columns: 80px 1fr; padding: 9px 0; }
+  .fp-spec dd { font-size: 14px; }
+}

@@ -1,30 +1,5 @@
-import { useState } from 'react';
-import './FloorPlan2D.css';
-
-// Image map — piece id → public image path
-const IMAGE_MAP = {
-  'sofa':            '/images/Reception-sofa.png',
-  'reception-table': '/images/Reciption-table.png',
-  'tv-unit':         '/images/Reception-tv-unit.png',
-  'bed':             '/images/Master-bed.png',
-  'wardrobe':        '/images/Master-drawer.png',
-  'mirror-rack':     '/images/Master-mirror&rack.png',
-  'vanity':          '/images/Master-تسريحة.png',
-  'display-cabinet': '/images/Hall-nich.png',
-  'bar-sideboard':   '/images/Hall-bar.jpg',
-  'dining-table':    '/images/Hall-table.png',
-  'baby-wardrobe':   '/images/Baby-drawer.png',
-  'baby-bed':        '/images/Baby-bed.png',
-  'baby-commode':    '/images/Baby-commode.png',
-  'master-drawer':   '/images/Master-drawer.png',
-};
-
-// Second image per piece (toggle button on the photo side)
-const ALT_IMAGE_MAP = {
-  'mirror-rack':  { src: '/images/Master-mirror&rack-back.png', showAlt: '↺ عرض الخلف',       showMain: '↺ عرض الأمام' },
-  'dining-table': { src: '/images/Hall-table-2.png',            showAlt: '↺ زاوية تانية',     showMain: '↺ الزاوية الأولى' },
-  'baby-bed':     { src: '/images/Baby-bed-2.png',              showAlt: '↺ السرير التاني',   showMain: '↺ السرير الأول' },
-};
+import { useEffect, useRef, useState } from 'react';
+import './FurniturePopup.css';
 
 // 2D architectural sketch for each piece (inline SVG)
 function Sketch2D({ id }) {
@@ -46,200 +21,171 @@ function Sketch2D({ id }) {
   }
 }
 
+const canSpeak = typeof window !== 'undefined' && 'speechSynthesis' in window;
+const AR_NUM = ['١', '٢', '٣', '٤', '٥', '٦'];
+
+// Piece card: a photo gallery (with design options) next to the specs.
+// The technical sketch is a second tab of the same viewer.
 export default function FurniturePopup({ piece, onClose }) {
-  const [flipped, setFlipped] = useState(false);
-  const [imgErr, setImgErr] = useState(false);
+  const images = piece.images ?? [{ src: piece.image }];
+  const [idx, setIdx] = useState(0);
+  const [tab, setTab] = useState('photo'); // 'photo' | 'sketch'
   const [zoomed, setZoomed] = useState(false);
-  // some pieces have 2 images — toggle between them
-  const [mirrorSide, setMirrorSide] = useState('front');
+  const [speaking, setSpeaking] = useState(false);
+  const [broken, setBroken] = useState({});
+  const touchX = useRef(null);
 
-  const altImage = ALT_IMAGE_MAP[piece.id];
-  const isMirrorRack = Boolean(altImage);
-  const imgSrc = altImage && mirrorSide === 'back' ? altImage.src : IMAGE_MAP[piece.id];
+  const cur = images[idx];
+  const many = images.length > 1;
+  const hasOptions = images.some(im => im.option);
+  const optionNo = im => images.filter(x => x.option).indexOf(im);
+  const go = d => setIdx(i => (i + d + images.length) % images.length);
 
-  const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) {
-      if (zoomed) { setZoomed(false); return; }
-      onClose();
-    }
+  // Keyboard: Esc closes (zoom first), arrows move through the photos
+  useEffect(() => {
+    const onKey = e => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        if (zoomed) setZoomed(false); else onClose();
+      } else if (many && tab === 'photo' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+        e.stopPropagation();
+        go(e.key === 'ArrowLeft' ? 1 : -1); // RTL: left = next
+      }
+    };
+    window.addEventListener('keydown', onKey, true);
+    return () => window.removeEventListener('keydown', onKey, true);
+  });
+  useEffect(() => () => canSpeak && window.speechSynthesis.cancel(), []);
+
+  const speak = () => {
+    if (!canSpeak) return;
+    const synth = window.speechSynthesis;
+    if (speaking) { synth.cancel(); setSpeaking(false); return; }
+    const text = [piece.nameAr, ...piece.specs.map(s => `${s.labelAr}: ${s.value}`)].join('. ');
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ar-EG';
+    u.rate = 0.9;
+    u.onend = u.onerror = () => setSpeaking(false);
+    synth.cancel();
+    synth.speak(u);
+    setSpeaking(true);
   };
 
-  // Zoom overlay — full screen image viewer
-  if (zoomed && imgSrc && !imgErr) {
+  const onTouchStart = e => { touchX.current = e.touches[0].clientX; };
+  const onTouchEnd = e => {
+    if (touchX.current == null || !many) return;
+    const dx = e.changedTouches[0].clientX - touchX.current;
+    if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+    touchX.current = null;
+  };
+
+  if (zoomed && !broken[cur.src]) {
     return (
-      <div
-        style={{
-          position:'fixed', inset:0, zIndex:600,
-          background:'rgba(0,0,0,0.92)',
-          display:'flex', alignItems:'center', justifyContent:'center',
-          cursor:'zoom-out',
-        }}
-        onClick={() => setZoomed(false)}
-      >
-        <img
-          src={imgSrc}
-          alt={piece.nameAr}
-          style={{
-            maxWidth:'95vw', maxHeight:'95vh',
-            objectFit:'contain', borderRadius:8,
-            boxShadow:'0 0 60px rgba(212,168,67,0.2)',
-          }}
-          onClick={e => e.stopPropagation()}
-        />
-        <button
-          onClick={() => setZoomed(false)}
-          style={{
-            position:'absolute', top:20, right:20,
-            background:'rgba(212,168,67,0.15)',
-            border:'1px solid rgba(212,168,67,0.4)',
-            color:'#d4a843', borderRadius:8,
-            width:36, height:36, fontSize:16, cursor:'pointer',
-          }}
-        >✕</button>
+      <div className="fp-zoom" onClick={() => setZoomed(false)}>
+        <img src={cur.src} alt={piece.nameAr} onClick={e => e.stopPropagation()} />
+        {many && <>
+          <button className="fp-zoom-nav fp-zoom-prev" onClick={e => { e.stopPropagation(); go(-1); }} aria-label="الصورة اللي قبل">›</button>
+          <button className="fp-zoom-nav fp-zoom-next" onClick={e => { e.stopPropagation(); go(1); }} aria-label="الصورة اللي بعد">‹</button>
+        </>}
+        <button className="fp-zoom-close" onClick={() => setZoomed(false)} aria-label="اقفل التكبير">✕</button>
       </div>
     );
   }
 
   return (
-    <div className="fp-popup-overlay" onClick={handleOverlayClick}>
-      {/* Scene wrapper — perspective */}
-      <div className="fp-card-scene" onClick={() => setFlipped(f => !f)}>
-        <div className={`fp-card ${flipped ? 'flipped' : ''}`}>
+    <div className="fp-popup-overlay" onClick={e => e.target === e.currentTarget && onClose()}
+      role="dialog" aria-modal="true" aria-label={piece.nameAr}>
+      <article className="fp-card">
 
-          {/* ── FRONT: 2D Architectural Sketch ── */}
-          <div className="fp-card-face fp-card-front">
-            <div className="fp-card-header" onClick={e => e.stopPropagation()}>
-              <div>
-                <div className="fp-card-name">{piece.nameAr}</div>
-              </div>
-              <span className="fp-card-room">{piece.roomNameAr}</span>
-              <button className="fp-close-btn" onClick={(e) => { e.stopPropagation(); onClose(); }}>✕</button>
-            </div>
-
-            <div className="fp-card-body">
-              <div className="fp-sketch-wrap">
-                <svg viewBox="0 0 360 260" width="100%" height="100%" style={{ maxHeight: '280px' }}>
-                  <Sketch2D id={piece.id} />
-                </svg>
-              </div>
-            </div>
-
-            <div className="fp-card-footer">
-              <span className="fp-flip-icon">↻</span>
-              <span>اضغط للتقليب ورؤية الصورة الحقيقية</span>
-            </div>
+        {/* ── Viewer: photos / sketch ── */}
+        <section className="fp-viewer">
+          <div className="fp-tabs" role="tablist">
+            <button role="tab" aria-selected={tab === 'photo'} className={tab === 'photo' ? 'on' : ''} onClick={() => setTab('photo')}>📷 الصور</button>
+            <button role="tab" aria-selected={tab === 'sketch'} className={tab === 'sketch' ? 'on' : ''} onClick={() => setTab('sketch')}>📐 الرسمة الهندسية</button>
           </div>
 
-          {/* ── BACK: Real Photo ── */}
-          <div className="fp-card-face fp-card-back">
-            <div className="fp-card-header" onClick={e => e.stopPropagation()}>
-              <div>
-                <div className="fp-card-name">{piece.nameAr}</div>
-                <span style={{ fontSize: 12, color: 'rgba(212,168,67,0.5)' }}>{piece.nameEn}</span>
-              </div>
-              <span className="fp-card-room">{piece.roomNameAr}</span>
-              <div style={{ display:'flex', gap:6, marginRight:'auto', marginLeft:8 }} onClick={e => e.stopPropagation()}>
-                {/* Zoom button */}
-                {!imgErr && imgSrc && (
-                  <button
-                    className="fp-close-btn"
-                    onClick={(e) => { e.stopPropagation(); setZoomed(true); }}
-                    title="تكبير الصورة"
-                    style={{ fontSize:15 }}
-                  >⛶</button>
+          {tab === 'photo' ? (
+            <>
+              <div className="fp-stage" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+                {images.map((im, i) => (
+                  broken[im.src] ? null : (
+                    <img key={im.src + i} src={im.src} alt={im.label ? `${piece.nameAr} — ${im.label}` : piece.nameAr}
+                      className={`fp-stage-img ${i === idx ? 'on' : ''}`}
+                      onClick={() => setZoomed(true)}
+                      onError={() => setBroken(b => ({ ...b, [im.src]: true }))} />
+                  )
+                ))}
+                {broken[cur.src] && <div className="fp-photo-placeholder"><span>🏠</span>الصورة مش موجودة</div>}
+
+                {cur.option && (
+                  <span className="fp-option-badge">اختيار {AR_NUM[optionNo(cur)]}{cur.label ? ` · ${cur.label}` : ''}</span>
                 )}
-                <button className="fp-close-btn" onClick={(e) => { e.stopPropagation(); onClose(); }}>✕</button>
+                {!cur.option && cur.label && many && <span className="fp-option-badge plain">{cur.label}</span>}
+
+                {many && <>
+                  <button className="fp-nav fp-nav-prev" onClick={() => go(-1)} aria-label="الصورة اللي قبل">›</button>
+                  <button className="fp-nav fp-nav-next" onClick={() => go(1)} aria-label="الصورة اللي بعد">‹</button>
+                  <span className="fp-counter">{AR_NUM[idx] ?? idx + 1} / {AR_NUM[images.length - 1] ?? images.length}</span>
+                </>}
+                <button className="fp-zoom-btn" onClick={() => setZoomed(true)} aria-label="كبّر الصورة">⤢</button>
               </div>
-            </div>
 
-            <div className="fp-card-body">
-              <div className="fp-photo-wrap" style={{ position:'relative' }}>
-                {!imgErr && imgSrc ? (
-                  <>
-                    <img
-                      src={imgSrc}
-                      alt={piece.nameAr}
-                      className="fp-photo"
-                      style={{ cursor:'zoom-in' }}
-                      onError={() => setImgErr(true)}
-                      onClick={(e) => { e.stopPropagation(); setZoomed(true); }}
-                    />
-                    {/* Front/Back toggle for mirror-rack */}
-                    {isMirrorRack && (
-                      <button
-                        onClick={(e) => { e.stopPropagation(); setMirrorSide(s => s === 'front' ? 'back' : 'front'); setImgErr(false); }}
-                        style={{
-                          position:'absolute', bottom:8, left:8,
-                          background:'rgba(12,10,8,0.85)',
-                          border:'1px solid rgba(212,168,67,0.4)',
-                          borderRadius:6, padding:'4px 12px',
-                          fontSize:11, color:'#d4a843',
-                          fontFamily:'Cairo, sans-serif',
-                          cursor:'pointer',
-                        }}
-                      >{mirrorSide === 'front' ? altImage.showAlt : altImage.showMain}</button>
-                    )}
-                    <div
-                      style={{
-                        position:'absolute', bottom:8, right:8,
-                        background:'rgba(0,0,0,0.5)',
-                        border:'1px solid rgba(212,168,67,0.3)',
-                        borderRadius:6, padding:'3px 8px',
-                        fontSize:11, color:'rgba(212,168,67,0.7)',
-                        fontFamily:'sans-serif', pointerEvents:'none',
-                      }}
-                    >🔍 اضغط للتكبير</div>
-                  </>
-                ) : (
-                  <div className="fp-photo-placeholder">
-                    <span className="fp-photo-placeholder-icon">🏠</span>
-                    <span>الصورة غير متاحة</span>
-                  </div>
-                )}
+              {many && (
+                <div className="fp-thumbs" role="tablist" aria-label={hasOptions ? 'الاختيارات' : 'الصور'}>
+                  {images.map((im, i) => (
+                    <button key={im.src + i} role="tab" aria-selected={i === idx}
+                      className={`fp-thumb ${i === idx ? 'on' : ''}`} onClick={() => setIdx(i)}>
+                      <img src={im.src} alt="" />
+                      <span>{im.option ? `اختيار ${AR_NUM[optionNo(im)]}` : (im.label ?? `صورة ${AR_NUM[i]}`)}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="fp-sketch">
+              <svg viewBox="0 0 360 260" width="100%" height="100%">
+                <Sketch2D id={piece.id} />
+              </svg>
+            </div>
+          )}
+        </section>
+
+        {/* ── Info ── */}
+        <section className="fp-info">
+          <header className="fp-head">
+            <div>
+              <span className="fp-room">{piece.roomNameAr}</span>
+              <h2 className="fp-name">{piece.nameAr}</h2>
+              <span className="fp-qty">العدد: {piece.qty}</span>
+            </div>
+            <button className="fp-close" onClick={onClose} aria-label="اقفل">✕</button>
+          </header>
+
+          {hasOptions && (
+            <p className="fp-options-note">
+              ✨ فيه <b>{AR_NUM[images.filter(x => x.option).length - 1]}</b> اختيارات للتصميم ده — قلّب بينهم في الصور
+            </p>
+          )}
+
+          <dl className="fp-specs">
+            {piece.specs.map((s, i) => (
+              <div key={i} className="fp-spec">
+                <dt>{s.labelAr}</dt>
+                <dd>{s.value}</dd>
               </div>
-            </div>
+            ))}
+          </dl>
 
-            <div className="fp-card-footer">
-              <span className="fp-flip-icon">↻</span>
-              <span>اضغط للعودة للرسم الهندسي</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Specs below card */}
-      <SpecsBar piece={piece} />
-    </div>
-  );
-}
-
-function SpecsBar({ piece }) {
-  return (
-    <div style={{
-      position: 'absolute',
-      bottom: 28,
-      left: '50%',
-      transform: 'translateX(-50%)',
-      display: 'flex',
-      gap: 12,
-      flexWrap: 'wrap',
-      justifyContent: 'center',
-      maxWidth: '90vw',
-    }}>
-      {piece.specs.slice(0, 4).map((s, i) => (
-        <div key={i} style={{
-          background: 'rgba(12,10,8,0.8)',
-          border: '1px solid rgba(212,168,67,0.2)',
-          borderRadius: 20,
-          padding: '4px 14px',
-          fontFamily: 'Cairo, sans-serif',
-          fontSize: 12,
-          color: '#c8b888',
-          whiteSpace: 'nowrap',
-        }}>
-          <span style={{ color: '#d4a843' }}>{s.labelAr}: </span>{s.value}
-        </div>
-      ))}
+          {canSpeak && (
+            <footer className="fp-actions">
+              <button className={`fp-action ${speaking ? 'on' : ''}`} onClick={speak}>
+                {speaking ? '⏹ وقّف' : '🔊 اسمع المواصفات'}
+              </button>
+            </footer>
+          )}
+        </section>
+      </article>
     </div>
   );
 }
@@ -494,38 +440,44 @@ function BabyWardrobeSketch() {
       <rect x="21" y="39" width="66" height="162" rx="2" fill="rgba(180,210,230,0.18)" stroke="#888" strokeWidth="1"/>
       <line x1="30" y1="50" x2="55" y2="80" stroke="white" strokeWidth="1" opacity="0.15"/>
       {/* Wavy S wood strip */}
-      <path d="M92,35 L92,100 C92,115 104,115 104,130 L104,205" fill="none" stroke="#9a8f84" strokeWidth="5"/>
+      <path d="M92,35 L92,100 C92,115 104,115 104,130 L104,205" fill="none" stroke="#845F47" strokeWidth="5"/>
       {/* Door 2 */}
       <rect x="180" y="35" width="163" height="170" rx="2" fill="#252018" stroke="#666" strokeWidth="1.2"/>
-      <path d="M255,35 L255,110 C255,125 267,125 267,140 L267,205" fill="none" stroke="#9a8f84" strokeWidth="5"/>
+      <path d="M255,35 L255,110 C255,125 267,125 267,140 L267,205" fill="none" stroke="#845F47" strokeWidth="5"/>
       <text x="180" y="230" textAnchor="middle" fontSize="13" fill="rgba(212,168,67,0.6)" fontFamily="Cairo, sans-serif">خزانة أطفال — بابان انزلاقيان — شريط خشب متموّج + مرآة</text>
+    </g>
+  );
+}
+
+function SketchKidsBed({ x, flip }) {
+  return (
+    <g>
+      {/* Headboard (cream) */}
+      <rect x={x} y={40} width={150} height={70} rx={8} fill="#3a352c" stroke="#d4a843" strokeWidth={2}/>
+      {/* Beige upholstered panel */}
+      <rect x={flip ? x+38 : x+12} y={50} width={100} height={50} rx={6} fill="#5a5044" stroke="#888" strokeWidth={1}/>
+      {/* Oval slot with wood strip */}
+      <rect x={flip ? x+14 : x+122} y={54} width={14} height={42} rx={7} fill="#14110d" stroke="#888" strokeWidth={1}/>
+      <rect x={flip ? x+18 : x+126} y={58} width={6} height={34} rx={3} fill="#845F47"/>
+      {/* Mattress */}
+      <rect x={x+4} y={110} width={142} height={22} rx={5} fill="#3a3a38" stroke="#aaa" strokeWidth={1}/>
+      {/* Cream base */}
+      <rect x={x} y={132} width={150} height={8} rx={2} fill="#4a453c" stroke="#888" strokeWidth={0.8}/>
+      <rect x={x} y={140} width={150} height={50} rx={3} fill="#D9CCB6" stroke="#d4a843" strokeWidth={1.5}/>
     </g>
   );
 }
 
 function BabyBedSketch() {
   // Two mirrored single beds — accent slot on the outer side of each
-  const Bed = ({ x, flip }) => (
-    <g>
-      {/* Headboard (cream) */}
-      <rect x={x} y={40} width={150} height={70} rx={8} fill="#3a352c" stroke="#d4a843" strokeWidth={2}/>
-      {/* Gray upholstered panel */}
-      <rect x={flip ? x+38 : x+12} y={50} width={100} height={50} rx={6} fill="#4a4a4a" stroke="#888" strokeWidth={1}/>
-      {/* Oval slot with wood strip */}
-      <rect x={flip ? x+14 : x+122} y={54} width={14} height={42} rx={7} fill="#14110d" stroke="#888" strokeWidth={1}/>
-      <rect x={flip ? x+18 : x+126} y={58} width={6} height={34} rx={3} fill="#7a6a5c"/>
-      {/* Mattress */}
-      <rect x={x+4} y={110} width={142} height={22} rx={5} fill="#3a3a38" stroke="#aaa" strokeWidth={1}/>
-      {/* Ash wood base with white band */}
-      <rect x={x} y={132} width={150} height={8} rx={2} fill="#4a453c" stroke="#888" strokeWidth={0.8}/>
-      <rect x={x} y={140} width={150} height={50} rx={3} fill="#6e655c" stroke="#d4a843" strokeWidth={1.5}/>
-    </g>
-  );
   return (
     <g>
-      <Bed x={15} flip={false}/>
-      <Bed x={195} flip={true}/>
-      <text x="180" y="230" textAnchor="middle" fontSize="13" fill="rgba(212,168,67,0.6)" fontFamily="Cairo, sans-serif">سريرين أطفال — التاني عكس الأول</text>
+      <SketchKidsBed x={15} flip={false}/>
+      <SketchKidsBed x={195} flip={true}/>
+      {/* Commode between the beds — the small headboard parts face it */}
+      <rect x={168} y={150} width={24} height={40} rx={3} fill="#D9CCB6" stroke="#d4a843" strokeWidth={1.2}/>
+      <rect x={168} y={146} width={24} height={5} rx={1} fill="#564836"/>
+      <text x="180" y="230" textAnchor="middle" fontSize="13" fill="rgba(212,168,67,0.6)" fontFamily="Cairo, sans-serif">سريرين أطفال — الجزء الصغير ناحية الكومود</text>
     </g>
   );
 }

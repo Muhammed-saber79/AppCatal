@@ -1,0 +1,196 @@
+.door-scene {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* vanilla-latte wall with a soft light pool around the door */
+  background:
+    radial-gradient(ellipse 55% 60% at 50% 38%, rgba(255,240,214,0.85) 0%, rgba(255,240,214,0) 70%),
+    linear-gradient(180deg, #E4D8C6 0%, var(--wall) 55%, #D9CBB6 100%);
+  perspective: 1400px;
+}
+
+/* subtle plaster texture */
+.door-scene::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(94,66,49,0.05) 1px, transparent 1px);
+  background-size: 5px 5px;
+  pointer-events: none;
+}
+
+.door-sconce {
+  position: absolute;
+  top: 6vh;
+  left: 50%;
+  width: 46px;
+  height: 14px;
+  transform: translateX(-50%);
+  border-radius: 0 0 24px 24px;
+  background: linear-gradient(var(--gold), #8c6f42);
+  box-shadow: 0 10px 60px 30px rgba(255,214,150,0.35);
+}
+
+.door-frame {
+  position: relative;
+  width: min(360px, 74vw);
+  height: min(62vh, 560px);
+  margin-top: 4vh;
+  padding: 14px 14px 0;
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(90deg, #5E4231, #6e4f3a 50%, #5E4231);
+  box-shadow: 0 30px 60px rgba(60,40,26,0.35), inset 0 0 0 2px rgba(0,0,0,0.15);
+  z-index: 2;
+}
+
+.door-inside {
+  position: absolute;
+  inset: 14px 14px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse at 50% 60%, #FFF6E6 0%, #F3D9A4 55%, #E7C793 100%);
+  color: var(--walnut-deep);
+  font-size: clamp(22px, 4vw, 34px);
+  font-weight: 800;
+  opacity: 0;
+  transition: opacity 0.6s ease 0.35s;
+}
+.is-open .door-inside { opacity: 1; }
+
+.door-leaves {
+  position: absolute;
+  inset: 14px 14px 0;
+  display: flex;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  transform-style: preserve-3d;
+}
+
+.door-leaf {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 16px;
+  background:
+    repeating-linear-gradient(92deg, rgba(0,0,0,0.05) 0 2px, transparent 2px 9px),
+    linear-gradient(180deg, #8d6649 0%, var(--walnut) 45%, #74533e 100%);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.18);
+  transition: transform 1.2s cubic-bezier(0.6, 0.05, 0.25, 1);
+  backface-visibility: hidden;
+}
+.door-leaf-r { transform-origin: right center; } /* RTL: first leaf sits on the right */
+.door-leaf-l { transform-origin: left center; }
+
+.door-leaves:hover .door-leaf-r { transform: rotateY(-6deg); }
+.door-leaves:hover .door-leaf-l { transform: rotateY(6deg); }
+.is-open .door-leaf-r { transform: rotateY(-105deg) !important; }
+.is-open .door-leaf-l { transform: rotateY(105deg) !important; }
+
+.door-panel {
+  flex: 1;
+  border-radius: 4px;
+  box-shadow: inset 2px 2px 0 rgba(255,255,255,0.08), inset -2px -2px 0 rgba(0,0,0,0.18);
+}
+
+.door-handle {
+  position: absolute;
+  top: 50%;
+  width: 6px;
+  height: 64px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #d9bd86, var(--gold) 50%, #8c6f42);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  transform: translateY(-50%);
+}
+.door-leaf-r .door-handle { left: 10px; }
+.door-leaf-l .door-handle { right: 10px; }
+
+.door-plaque {
+  position: absolute;
+  top: -78px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 26px 8px;
+  border-radius: 10px;
+  background: var(--cream);
+  border: 1.5px solid var(--gold);
+  box-shadow: var(--shadow);
+  white-space: nowrap;
+}
+.door-plaque-title {
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1.2;
+  color: var(--walnut-deep);
+}
+.door-plaque-sub {
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.door-floor {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  /* starts exactly at the door's threshold (door is centered with a 4vh top margin) */
+  height: calc(48vh - min(31vh, 280px));
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0.12), transparent 30%),
+    repeating-linear-gradient(90deg, #EEE8DE 0 120px, #E4DCCF 120px 122px);
+  z-index: 1;
+}
+
+.door-cta {
+  position: absolute;
+  bottom: max(4vh, calc((48vh - min(31vh, 280px)) / 2 - 28px));
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 999px;
+  background: var(--walnut-deep);
+  color: var(--cream);
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  animation: ctaPulse 2.4s ease-in-out infinite;
+  transition: opacity 0.3s;
+}
+.door-cta:hover { background: var(--walnut); }
+.is-open .door-cta { opacity: 0; pointer-events: none; }
+.door-cta-key { font-size: 20px; }
+
+@keyframes ctaPulse {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+
+/* walking in: the whole scene zooms through the door */
+.is-open .door-frame {
+  transition: transform 1.1s cubic-bezier(0.7, 0, 0.3, 1) 0.45s;
+  transform: scale(3.2);
+}
+
+@media (max-width: 600px) {
+  .door-plaque { top: -70px; padding: 4px 18px 6px; }
+  .door-plaque-title { font-size: 24px; }
+  .door-cta { font-size: 16px; padding: 12px 22px; }
+}

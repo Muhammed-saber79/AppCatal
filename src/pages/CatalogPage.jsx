@@ -3,32 +3,20 @@ import './CatalogPage.css';
 import { rooms, allPieces } from '../data/furniture';
 import FurniturePopup from '../components/FurniturePopup';
 
-const IMAGE_MAP = {
-  'sofa':            '/images/Reception-sofa.png',
-  'reception-table': '/images/Reciption-table.png',
-  'tv-unit':         '/images/Reception-tv-unit.png',
-  'bed':             '/images/Master-bed.png',
-  'wardrobe':        '/images/Master-mirror&rack.png',
-  'vanity':          '/images/Master-تسريحة.png',
-  'display-cabinet': '/images/Hall-nich.png',
-  'bar-sideboard':   '/images/Hall-bar.jpg',
-  'dining-table':    '/images/Hall-table.png',
-  'baby-wardrobe':   '/images/Baby-drawer.png',
-  'baby-bed':        '/images/Baby-bed.png',
-  'baby-commode':    '/images/Baby-commode.png',
-};
-
 function CatCard({ piece, onSelect }) {
   const [err, setErr] = useState(false);
-  const src = IMAGE_MAP[piece.id];
+  const src = piece.image;
 
   return (
-    <div className="cat-card" onClick={() => onSelect(piece.id)}>
+    <button className="cat-card" onClick={() => onSelect(piece.id)}>
       <div className="cat-card-media">
         {!err && src
           ? <img src={src} alt={piece.nameAr} className="cat-card-img" onError={() => setErr(true)} />
           : <div className="cat-card-placeholder">🏠</div>
         }
+        {piece.images.some(im => im.option)
+          ? <span className="cat-card-note">✨ {piece.images.filter(im => im.option).length} اختيارات</span>
+          : piece.images.length > 1 && <span className="cat-card-note">📷 {piece.images.length} صور</span>}
       </div>
       <div className="cat-card-body">
         <h3 className="cat-card-name">{piece.nameAr}</h3>
@@ -39,8 +27,8 @@ function CatCard({ piece, onSelect }) {
           ))}
         </div>
       </div>
-      <div className="cat-card-hint">عرض التفاصيل ←</div>
-    </div>
+      <div className="cat-card-hint">شوف التفاصيل ←</div>
+    </button>
   );
 }
 
@@ -65,7 +53,7 @@ export default function CatalogPage() {
         <div className="catalog-title-row">
           <h2 className="catalog-title">كتالوج الأثاث</h2>
         </div>
-        <p className="catalog-subtitle">FURNITURE CATALOG</p>
+        <p className="catalog-subtitle">كل القطع في مكان واحد — دوس على أي قطعة</p>
 
         <div className="catalog-tabs">
           {tabs.map(t => (

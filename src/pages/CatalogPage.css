@@ -1,125 +1,86 @@
 .catalog-page {
   width: 100%;
   height: 100vh;
-  background: #080706;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  position: relative;
-}
-
-.catalog-page::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(212,168,67,0.04) 0%, transparent 60%);
-  pointer-events: none;
+  background: linear-gradient(180deg, #E6DACA 0%, var(--wall) 40%);
 }
 
 .catalog-top {
   flex-shrink: 0;
-  padding: 20px 32px 0;
+  padding: 20px 96px 0;
   text-align: center;
-  position: relative;
-  z-index: 2;
 }
-
-.catalog-title-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  direction: rtl;
-  margin-bottom: 4px;
-}
-
+.catalog-title-row { margin-bottom: 2px; }
 .catalog-title {
-  font-family: 'Cairo', sans-serif;
-  font-size: 20px;
-  font-weight: 800;
-  color: #d4a843;
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 900;
+  color: var(--walnut-deep);
 }
-
 .catalog-subtitle {
-  font-family: 'Cairo', sans-serif;
-  font-size: 12px;
-  color: rgba(212,168,67,0.4);
-  letter-spacing: 2px;
+  font-size: 14px;
+  color: var(--ink-soft);
 }
 
-/* Tab bar */
 .catalog-tabs {
   display: flex;
   gap: 8px;
   justify-content: center;
-  padding: 14px 0 10px;
   flex-wrap: wrap;
+  padding: 14px 0 10px;
 }
-
 .cat-tab {
-  font-family: 'Cairo', sans-serif;
-  font-size: 13px;
-  color: rgba(212,168,67,0.5);
-  background: rgba(212,168,67,0.05);
-  border: 1px solid rgba(212,168,67,0.15);
-  border-radius: 20px;
-  padding: 5px 16px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1.5px solid var(--line);
+  background: var(--cream);
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.2s, color 0.2s;
 }
-.cat-tab:hover {
-  color: #d4a843;
-  background: rgba(212,168,67,0.1);
-}
-.cat-tab.active {
-  color: #080706;
-  background: #d4a843;
-  border-color: #d4a843;
-}
+.cat-tab:hover { background: var(--gold-soft); }
+.cat-tab.active { background: var(--walnut); border-color: var(--walnut); color: var(--cream); }
 
-/* Scrollable area */
 .catalog-scroll {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 12px 24px 32px;
-  position: relative;
-  z-index: 2;
+  padding: 12px 96px 40px;
 }
 
-/* Cards grid */
 .cat-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 18px;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-/* Card */
 .cat-card {
-  background: #12100d;
-  border: 1px solid rgba(212,168,67,0.12);
-  border-radius: 14px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+  text-align: inherit;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--cream);
+  color: inherit;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(74,52,36,0.07);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
-.cat-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(212,168,67,0.4);
-  box-shadow: 0 12px 36px rgba(212,168,67,0.1);
-}
+.cat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
 
 .cat-card-media {
-  height: 170px;
-  background: #0c0a08;
-  overflow: hidden;
   position: relative;
+  height: 180px;
+  background: var(--cream-2);
+  overflow: hidden;
 }
-
 .cat-card-img {
   width: 100%;
   height: 100%;
@@ -127,74 +88,74 @@
   transition: transform 0.4s;
 }
 .cat-card:hover .cat-card-img { transform: scale(1.05); }
-
 .cat-card-placeholder {
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 36px;
-  opacity: 0.3;
+  font-size: 40px;
+  opacity: 0.4;
+}
+.cat-card-note {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(246,241,232,0.94);
+  border: 1px solid var(--gold);
+  color: var(--walnut-deep);
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .cat-card-body {
-  padding: 14px;
-  direction: rtl;
   flex: 1;
+  padding: 14px 16px 10px;
 }
-
 .cat-card-name {
-  font-family: 'Cairo', sans-serif;
-  font-size: 15px;
-  font-weight: 700;
-  color: #f0e0b0;
-  margin-bottom: 4px;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--walnut-deep);
 }
-
 .cat-card-room {
-  font-size: 11px;
-  color: rgba(212,168,67,0.45);
-  letter-spacing: 0.5px;
-  margin-bottom: 8px;
   display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: var(--ink-soft);
 }
-
 .cat-card-specs {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
 }
-
 .cat-spec-chip {
-  font-family: 'Cairo', sans-serif;
-  font-size: 11px;
-  color: #8a7858;
-  background: rgba(212,168,67,0.05);
-  border-radius: 4px;
-  padding: 2px 7px;
+  padding: 3px 10px;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 13px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .cat-card-hint {
-  padding: 8px 14px;
-  font-family: 'Cairo', sans-serif;
-  font-size: 11px;
-  color: rgba(212,168,67,0.35);
-  border-top: 1px solid rgba(212,168,67,0.06);
+  padding: 10px 16px;
+  border-top: 1px solid var(--line);
   text-align: center;
-  transition: color 0.2s;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--walnut);
 }
-.cat-card:hover .cat-card-hint { color: #d4a843; }
+.cat-card:hover .cat-card-hint { background: var(--walnut); color: var(--cream); }
 
-/* Custom scrollbar */
-.catalog-scroll::-webkit-scrollbar { width: 4px; }
-.catalog-scroll::-webkit-scrollbar-track { background: transparent; }
-.catalog-scroll::-webkit-scrollbar-thumb { background: rgba(212,168,67,0.2); border-radius: 4px; }
-
-@media (max-width: 600px) {
+@media (max-width: 700px) {
+  .catalog-top { padding: 14px 16px 0; }
+  .catalog-scroll { padding: 10px 16px 100px; }
   .cat-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
   .cat-card-media { height: 130px; }
+  .cat-card-name { font-size: 15px; }
+  .cat-spec-chip { font-size: 12px; }
 }

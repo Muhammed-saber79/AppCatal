@@ -1,0 +1,315 @@
+.journey {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 45%, rgba(255,244,226,0.9) 0%, rgba(255,244,226,0) 70%),
+    linear-gradient(180deg, #E6DACA 0%, var(--wall) 50%, #DDD0BD 100%);
+}
+
+/* ── Top ── */
+.journey-top {
+  text-align: center;
+  padding: 18px 96px 4px;
+  z-index: 3;
+}
+.journey-crumbs {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.crumb {
+  border: none;
+  background: none;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--walnut);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 8px;
+}
+.crumb:disabled { color: var(--ink-soft); cursor: default; }
+.crumb:not(:disabled):hover { background: var(--gold-soft); }
+.crumb.current { color: var(--ink); font-weight: 700; }
+.crumb-sep { opacity: 0.5; }
+
+.journey-title {
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 900;
+  color: var(--walnut-deep);
+  line-height: 1.3;
+}
+.journey-hint {
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+/* ── Stage: the plan sitting on a table, tilting slightly ── */
+.journey-stage {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  position: relative;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 96px;
+  perspective: 1600px;
+}
+.journey-board {
+  height: 100%;
+  max-width: 100%;
+  aspect-ratio: auto;
+  display: flex;
+  border-radius: 14px;
+  background: var(--cream);
+  padding: 10px;
+  box-shadow: 0 40px 70px -20px rgba(74,52,36,0.45), 0 6px 18px rgba(74,52,36,0.15);
+  transform: rotateX(calc(10deg + var(--tilt-x))) rotateY(var(--tilt-y));
+  transform-origin: 50% 60%;
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.9s;
+}
+.in-room .journey-board {
+  /* stepping into the room flattens the view */
+  transform: rotateX(calc(var(--tilt-x) * 0.4)) rotateY(calc(var(--tilt-y) * 0.4));
+  box-shadow: 0 24px 50px -16px rgba(74,52,36,0.35);
+}
+.journey-svg {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  display: block;
+  border-radius: 6px;
+  user-select: none;
+}
+.in-room .journey-svg { width: min(100%, 1100px); }
+
+.journey-dim {
+  fill: var(--wall);
+  fill-opacity: 0.82;
+  transition: opacity 0.6s;
+  pointer-events: none;
+}
+
+.area-label {
+  font-family: 'Cairo', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  fill: #9C8870;
+  pointer-events: none;
+}
+
+/* House view: rooms as buttons */
+.room-hit { cursor: pointer; outline: none; }
+.room-hit-area {
+  fill: rgba(176,141,87,0);
+  stroke: rgba(176,141,87,0);
+  stroke-width: 4;
+  transition: fill 0.25s, stroke 0.25s;
+}
+.room-hit:hover .room-hit-area,
+.room-hit:focus-visible .room-hit-area {
+  fill: rgba(176,141,87,0.14);
+  stroke: var(--gold);
+}
+.room-tag rect {
+  fill: rgba(246,241,232,0.94);
+  stroke: var(--gold);
+  stroke-width: 1.5;
+  filter: drop-shadow(0 3px 6px rgba(74,52,36,0.25));
+  transition: transform 0.25s;
+}
+.room-tag text {
+  font-family: 'Cairo', sans-serif;
+  font-size: 19px;
+  font-weight: 800;
+  fill: var(--walnut-deep);
+}
+.room-hit:hover .room-tag { transform-box: fill-box; }
+.room-hit:hover .room-tag rect { fill: var(--walnut); }
+.room-hit:hover .room-tag text { fill: var(--cream); }
+
+/* Room view: pieces as buttons */
+.piece-hit { cursor: pointer; outline: none; }
+.piece-hit-area {
+  fill: rgba(176,141,87,0);
+  stroke: rgba(176,141,87,0);
+  stroke-width: 2;
+  transition: fill 0.2s, stroke 0.2s;
+}
+.piece-hit:hover .piece-hit-area,
+.piece-hit:focus-visible .piece-hit-area {
+  fill: rgba(176,141,87,0.18);
+  stroke: var(--gold);
+}
+.piece-tag rect {
+  fill: var(--walnut-deep);
+  fill-opacity: 0.92;
+}
+.piece-tag text {
+  font-family: 'Cairo', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  fill: var(--cream);
+}
+.piece-tag { animation: tagIn 0.5s 0.55s both; pointer-events: none; }
+@keyframes tagIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ── Bottom controls ── */
+.journey-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 96px 18px;
+  z-index: 3;
+}
+.room-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.room-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 1.5px solid var(--line);
+  background: var(--cream);
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(74,52,36,0.08);
+  transition: transform 0.15s, background 0.2s, color 0.2s;
+}
+.room-btn:hover { background: var(--walnut); color: var(--cream); transform: translateY(-2px); }
+.room-btn-icon { font-size: 20px; }
+
+.room-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 1100px;
+  justify-content: space-between;
+}
+.nav-room {
+  flex-shrink: 0;
+  padding: 10px 16px;
+  border-radius: 14px;
+  border: 1.5px solid var(--line);
+  background: var(--cream);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.nav-room:hover { background: var(--walnut); color: var(--cream); }
+
+.piece-chips {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 4px;
+  scrollbar-width: thin;
+}
+.piece-chip {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px 5px 5px;
+  border-radius: 14px;
+  border: 1.5px solid var(--gold);
+  background: var(--cream);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.2s;
+  animation: chipIn 0.4s both;
+}
+.piece-chip:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.piece-chip img {
+  width: 42px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+@keyframes chipIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.back-house {
+  border: none;
+  background: none;
+  color: var(--walnut);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+.back-house:hover { background: var(--gold-soft); }
+
+@media (max-width: 700px) {
+  .journey-top { padding: 12px 16px 0; }
+  .journey-hint { font-size: 13px; }
+  .journey-stage { padding: 6px 12px; }
+  .journey-bottom { padding: 6px 12px 92px; } /* room for the bottom tab bar */
+  .room-btn { padding: 10px 16px; font-size: 15px; }
+  .room-controls { flex-wrap: wrap; justify-content: center; }
+  .piece-chips { order: -1; width: 100%; }
+  .nav-room { font-size: 13px; padding: 8px 12px; }
+}
+
+/* ── Inside / from-above switch ── */
+.view-switch {
+  display: inline-flex;
+  margin-top: 6px;
+  padding: 4px;
+  gap: 4px;
+  border-radius: 999px;
+  background: var(--cream);
+  border: 1px solid var(--line);
+  box-shadow: 0 2px 8px rgba(74,52,36,0.08);
+}
+.view-switch button {
+  padding: 6px 16px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.view-switch button.on { background: var(--walnut); color: var(--cream); }
+
+.journey-board[hidden] { display: none; }
+
+/* the eye-level scene fills the stage like a wide window into the room */
+.journey-stage { container-type: size; }
+/* the scene keeps one landscape shape on every screen so the composition never breaks */
+.journey-scene {
+  --ratio: 1.9;
+  width: min(100cqw, calc(100cqh * var(--ratio)), 1180px);
+  aspect-ratio: var(--ratio);
+  border-radius: 18px;
+  padding: 8px;
+  background: var(--cream);
+  box-shadow: 0 40px 70px -24px rgba(74,52,36,0.45), 0 6px 18px rgba(74,52,36,0.12);
+}
+.is-inside .journey-hint { display: none; }
+
+@media (max-width: 700px) {
+  .journey-scene { --ratio: 1.45; padding: 4px; border-radius: 14px; }
+  .view-switch button { padding: 5px 12px; font-size: 13px; }
+}

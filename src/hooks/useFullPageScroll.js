@@ -4,8 +4,8 @@ import { useState, useCallback, useEffect, useRef } from 'react';
  * Full-page scroll hook — one section at a time.
  * Sections slide in from bottom to top.
  */
-export default function useFullPageScroll(totalSections) {
-  const [current, setCurrent] = useState(0);
+export default function useFullPageScroll(totalSections, initial = 0) {
+  const [current, setCurrent] = useState(initial);
   const [prev, setPrev] = useState(-1);
   const [direction, setDirection] = useState(1); // 1 = forward, -1 = back
   const isAnimating = useRef(false);
@@ -28,7 +28,8 @@ export default function useFullPageScroll(totalSections) {
   const back = useCallback(() => goTo(current - 1), [goTo, current]);
 
   // Helper: is a popup/overlay open?
-  const isOverlayOpen = () => !!document.querySelector('.fp-popup-overlay');
+  // (pages can also opt out with data-lock-scroll, e.g. the door intro or a zoomed-in room)
+  const isOverlayOpen = () => !!document.querySelector('.fp-popup-overlay, [data-lock-scroll="true"]');
 
   // Wheel
   useEffect(() => {

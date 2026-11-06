@@ -1,74 +1,65 @@
 import './App.css';
 import useFullPageScroll from './hooks/useFullPageScroll';
-import ParticleBackground from './components/ParticleBackground';
-import HeroPage from './pages/HeroPage';
-import FloorPlan2D from './components/FloorPlan2D';
+import DoorIntro from './pages/DoorIntro';
+import HomeJourney from './components/HomeJourney';
 import CatalogPage from './pages/CatalogPage';
 import CarpenterPage from './pages/CarpenterPage';
 
-const SECTIONS = ['hero', 'floorplan', 'catalog', 'carpenter'];
-const DOT_LABELS = ['الرئيسية', 'المخطط', 'الكتالوج', 'النجار'];
+const SECTIONS = ['door', 'home', 'catalog', 'carpenter'];
+const NAV = [
+  { label: 'الباب',    icon: '🚪' },
+  { label: 'الشقة',    icon: '🏠' },
+  { label: 'الكتالوج', icon: '🛋️' },
+  { label: 'النجار',   icon: '📋' },
+];
+
+// Allow deep links like /#home or /#catalog
+const initialSection = () => {
+  const i = SECTIONS.indexOf(window.location.hash.slice(1));
+  return i >= 0 ? i : 0;
+};
 
 export default function App() {
-  const { current, prev, direction, goTo } = useFullPageScroll(SECTIONS.length);
+  const { current, prev, direction, goTo } = useFullPageScroll(SECTIONS.length, initialSection());
 
-  // Pages array
   const pages = [
-    <HeroPage key="hero" onStart={() => goTo(1)} />,
-    <FloorPlan2D key="floorplan" />,
+    <DoorIntro key="door" onEnter={() => goTo(1)} />,
+    <HomeJourney key="home" />,
     <CatalogPage key="catalog" />,
     <CarpenterPage key="carpenter" />,
   ];
 
   return (
     <div className="app-root" dir="rtl" lang="ar">
-      <ParticleBackground />
+      {/* Side navigation — icon + label so it's obvious for everyone */}
+      {current > 0 && (
+        <nav className="side-nav" aria-label="التنقل بين الأقسام">
+          {SECTIONS.map((s, i) => (
+            <button
+              key={s}
+              className={`side-nav-btn ${current === i ? 'active' : ''}`}
+              onClick={() => goTo(i)}
+              aria-current={current === i ? 'page' : undefined}
+            >
+              <span className="side-nav-icon" aria-hidden="true">{NAV[i].icon}</span>
+              <span className="side-nav-label">{NAV[i].label}</span>
+            </button>
+          ))}
+        </nav>
+      )}
 
-      {/* Nav dots */}
-      <nav className="nav-dots" aria-label="التنقل بين الأقسام">
-        {SECTIONS.map((s, i) => (
-          <button
-            key={s}
-            className={`nav-dot ${current === i ? 'active' : ''}`}
-            onClick={() => goTo(i)}
-            aria-label={DOT_LABELS[i]}
-            title={DOT_LABELS[i]}
-          />
-        ))}
-      </nav>
-
-      {/* Page container */}
       <div className="page-container">
         {pages.map((page, i) => {
+          if (i !== current && i !== prev) return null;
           let cls = 'page ';
-          const isVisible = i === current || i === prev;
-
-          if (!isVisible) return null;
-
           if (i === current) {
-            cls += prev === -1
-              ? 'page-idle'
-              : direction > 0 ? 'page-enter' : 'page-enter-back';
+            cls += prev === -1 ? 'page-idle' : direction > 0 ? 'page-enter' : 'page-enter-back';
           } else {
-            // i === prev (exiting)
             cls += direction > 0 ? 'page-exit' : 'page-exit-back';
           }
-
-          return (
-            <div key={SECTIONS[i]} className={cls}>
-              {page}
-            </div>
-          );
+          return <div key={SECTIONS[i]} className={cls}>{page}</div>;
         })}
       </div>
-
-      {/* Scroll hint on hero */}
-      {current === 0 && (
-        <div className="scroll-hint" aria-hidden="true">
-          <div className="scroll-hint-line" />
-          <div className="scroll-hint-arrow" />
-        </div>
-      )}
     </div>
   );
 }
